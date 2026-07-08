@@ -43,6 +43,7 @@ export interface ParsedTrackData {
 	trackOf: number
 	discNo: number
 	discOf: number
+	language?: string
 	image?: {
 		optimized: boolean
 		small: Blob

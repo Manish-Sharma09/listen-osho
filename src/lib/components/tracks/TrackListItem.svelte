@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createManagedArtwork } from '$lib/helpers/create-managed-artwork.svelte'
 	import { formatDuration } from '$lib/helpers/utils/format-duration.ts'
-	import { formatNameOrUnknown } from '$lib/helpers/utils/text.ts'
+	import { formatNameOrUnknown, getItemLanguage } from '$lib/helpers/utils/text.ts'
 	import { createTrackQuery, type TrackData } from '$lib/library/get/value-queries.ts'
 	import { DownloadButton } from '$lib/rajneesh/components/index.ts'
 	import {
@@ -78,7 +78,7 @@
 				Error loading track with id {trackId}
 			</div>
 		{:else if track}
-			<div class="flex flex-col gap-1">
+			<div class="flex flex-col gap-1" lang={getItemLanguage(track.language)}>
 				<div class={[active ? 'text-primary' : 'color-onSurface', 'line-clamp-2 break-words']}>
 					{track.name}
 				</div>

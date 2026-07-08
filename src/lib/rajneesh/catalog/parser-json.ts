@@ -7,6 +7,9 @@ import type { CompactCatalogV1, AlbumTuple, StructuredTuple } from './schema-jso
 export const CATALOG_DIRECTORY_ID = -2
 const RAJNEESH_ARTIST = 'Osho'
 
+// Duplicated from hooks/get-ids.ts's isEnglishUrl to allow standalone operation
+const isEnglishUrl = (url: string): boolean => url.toLowerCase().includes('/english/')
+
 const hashStringToId = (str: string): number => {
 	let hash = 0
 	for (let i = 0; i < str.length; i++) {
@@ -86,6 +89,7 @@ export const parseCatalogJson = (json: CompactCatalogV1): NormalizedCatalog => {
 					trackOf: count,
 					discNo: 1,
 					discOf: 1,
+					language: isEnglishUrl(audioUrl) ? 'en' : 'hi',
 					file: remoteFile,
 					scannedAt: Date.now(),
 					fileName: `${trackUuid}.mp3`,
