@@ -1,7 +1,7 @@
 {
   "meta": {
-    "updatedAt": "2026-01-18",
-    "catalogVersion": "2026.01.18"
+    "updatedAt": "2026-07-16",
+    "catalogVersion": "2026.07.16"
   },
   "directContactLink": "https://wa.me/917506328193?text=hey%20i%20found%20an%20issue.",
   "fallbackImage": "https://oshoworld.com/uploads/pics_1713897522194_no_image.png",
@@ -31,6 +31,45 @@
         2
       ],
       "https://oshoworld.com/uploads/adhyatma-upanishad-osho.jpg"
+    ],
+    [
+      "Adrishya-KKMPP-18, Q-2, Naino Beech, NKSNAD-17,34",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "adrishya-kkmpp-18-q-2-naino-beech-nksnad-17-34-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/book-qa-extracts/",
+        "11 Adrishya-KKMPP-18, Q-2, Naino Beech, NKSNAD-17,34.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Agochar, Jagmag, Zarat DDM-15, 65min",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "agochar-jagmag-zarat-ddm-15-65min-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/book-qa-extracts/",
+        "26 Agochar, Jagmag, Zarat DDM-15, 65min.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "AgyaChakra, Geeta-5-11-B, 39 min",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "agyachakra-geeta-5-11-b-39-min-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/book-qa-extracts/",
+        "21 AgyaChakra, Geeta-5-11-B, 39 min.mp3",
+        0
+      ],
+      null
     ],
     [
       "Agyat Ki Aur",
@@ -68,6 +107,19 @@
         "https://archive.org/download/osho-audio-discourses-collection/OSHO_WORLD/Hindi/003-Ajhun%20Chet%20Ganwar/",
         "OSHO-Ajhun_Chet_Gawar_{i}.mp3",
         2
+      ],
+      null
+    ],
+    [
+      "Amar Sandesh",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "amar-sandesh-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/standalone-wisdom-talks/",
+        "41 Amar Sandesh.mp3",
+        0
       ],
       null
     ],
@@ -176,6 +228,32 @@
       null
     ],
     [
+      "Andhkar dhyan-1, SKDP,30 min.",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "andhkar-dhyan-1-skdp-30-min-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/meditation-techniques/",
+        "38 Andhkar dhyan-1, SKDP,30 min..mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Andhkar dhyan-2,SKDP, 30 min.",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "andhkar-dhyan-2-skdp-30-min-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/meditation-techniques/",
+        "39 Andhkar dhyan-2,SKDP, 30 min..mp3",
+        0
+      ],
+      null
+    ],
+    [
       "Antar Ki Khoj",
       "Hindi discourses",
       true,
@@ -187,6 +265,45 @@
         2
       ],
       "https://oshoworld.com/uploads/download-2.jpg"
+    ],
+    [
+      "Antardarshan",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "antardarshan-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/standalone-wisdom-talks/",
+        "45 Antardarshan.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Antardrishti",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "antardrishti-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/standalone-wisdom-talks/",
+        "39 Antardrishti.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "AntarJyoti=ShivLing, Bhor, HTMC-1, RDJM-4+MG-18, 48",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "antarjyoti-shivling-bhor-htmc-1-rdjm-4-mg-18-48-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/book-qa-extracts/",
+        "01 AntarJyoti=ShivLing, Bhor, HTMC-1, RDJM-4+MG-18, 48.mp3",
+        0
+      ],
+      null
     ],
     [
       "Apne Mahin Tatol",
@@ -239,6 +356,19 @@
         2
       ],
       "https://oshoworld.com/uploads/200px-Asambhav-2.jpg"
+    ],
+    [
+      "Asha aur bodh",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "asha-aur-bodh-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/standalone-wisdom-talks/",
+        "43 Asha aur bodh.mp3",
+        0
+      ],
+      null
     ],
     [
       "Ashtavakra Mahagitaa",
@@ -384,6 +514,71 @@
       "https://oshoworld.com/uploads/200px-BBBT_sml.jpg"
     ],
     [
+      "Bin Bati Bin Tel 01-A, 38min",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "bin-bati-bin-tel-01-a-38min-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/devotional-bhajan-talks/",
+        "16 Bin Bati Bin Tel 01-A, 38min.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Bin Bati Bin Tel 01-B, 35",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "bin-bati-bin-tel-01-b-35-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/devotional-bhajan-talks/",
+        "17 Bin Bati Bin Tel 01-B, 35.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Bin Bati Bin Tel- 18-A, 40min",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "bin-bati-bin-tel-18-a-40min-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/devotional-bhajan-talks/",
+        "18 Bin Bati Bin Tel- 18-A, 40min.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Bin Bati Bin Tel- 18-B, 38",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "bin-bati-bin-tel-18-b-38-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/devotional-bhajan-talks/",
+        "19 Bin Bati Bin Tel- 18-B, 38.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Bin chanda,SBS-9, Ujiyara, MHJM-17,Agya-Geeta, 40min",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "bin-chanda-sbs-9-ujiyara-mhjm-17-agya-geeta-40min-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/book-qa-extracts/",
+        "03 Bin chanda,SBS-9, Ujiyara, MHJM-17,Agya-Geeta, 40min.mp3",
+        0
+      ],
+      null
+    ],
+    [
       "Bin Ghan Parat Phuhar",
       "Hindi discourses",
       true,
@@ -410,6 +605,32 @@
       "https://oshoworld.com/uploads/download-2.jpg"
     ],
     [
+      "Birhini mandir dina bar-1A, 48 min",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "birhini-mandir-dina-bar-1a-48-min-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/devotional-bhajan-talks/",
+        "07 Birhini mandir dina bar-1A, 48 min.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Birhini mandir dina bar-1B, 48 min",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "birhini-mandir-dina-bar-1b-48-min-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/devotional-bhajan-talks/",
+        "08 Birhini mandir dina bar-1B, 48 min.mp3",
+        0
+      ],
+      null
+    ],
+    [
       "Bodhidharma: The Greatest Zen Master",
       "English discourses",
       true,
@@ -419,6 +640,19 @@
         "https://archive.org/download/osho-audio-discourses-collection/OSHO_WORLD/English/Bodhidharma%2001-20%20%E2%80%93%20Osho%20World/",
         "OSHO-Bodhidharma_{i}.mp3",
         2
+      ],
+      null
+    ],
+    [
+      "Buddhatva ka alok, EDS-117, 10min",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "buddhatva-ka-alok-eds-117-10min-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/book-qa-extracts/",
+        "29 Buddhatva ka alok, EDS-117, 10min.mp3",
+        0
       ],
       null
     ],
@@ -540,6 +774,19 @@
       "https://oshoworld.com/uploads/200px-DeepakBNK1.jpg"
     ],
     [
+      "Deepak Bara Nam Ka 01,55",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "deepak-bara-nam-ka-01-55-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/devotional-bhajan-talks/",
+        "10 Deepak Bara Nam Ka 01,55.mp3",
+        0
+      ],
+      null
+    ],
+    [
       "Dekh Kabira Roya",
       "Hindi discourses",
       true,
@@ -605,6 +852,19 @@
       "https://oshoworld.com/uploads/200px-Dhyandar-OMI.jpg"
     ],
     [
+      "Dhyan jagran ka dwar",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "dhyan-jagran-ka-dwar-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/meditation-techniques/",
+        "19 Dhyan jagran ka dwar.mp3",
+        0
+      ],
+      null
+    ],
+    [
       "Dhyan Ke Kamal",
       "Hindi discourses",
       true,
@@ -616,6 +876,32 @@
         2
       ],
       "https://oshoworld.com/uploads/200px-2619_lrg.jpg"
+    ],
+    [
+      "Dhyan ki anivaryata",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "dhyan-ki-anivaryata-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/meditation-techniques/",
+        "47 Dhyan ki anivaryata.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Dhyan ki bhumika",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "dhyan-ki-bhumika-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/meditation-techniques/",
+        "21 Dhyan ki bhumika.mp3",
+        0
+      ],
+      null
     ],
     [
       "Dhyan Sutra",
@@ -631,6 +917,19 @@
       "https://oshoworld.com/uploads/200px-Dhyan_Sutra_cover.jpg"
     ],
     [
+      "Divya Swad & Swapna, Kano Suni So Juth Sab 08, Q 3, 28min",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "divya-swad-swapna-kano-suni-so-juth-sab-08-q-3-28min-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/book-qa-extracts/",
+        "32_Divya_Swad_&_Swapna,_Kano_Suni_So_Juth_Sab_08,_Q_3,_28min.mp3",
+        0
+      ],
+      null
+    ],
+    [
       "Diya Tale Andhera",
       "Hindi discourses",
       true,
@@ -644,6 +943,32 @@
       null
     ],
     [
+      "Diya Tale Andhera 01part-I, 42 min",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "diya-tale-andhera-01part-i-42-min-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/devotional-bhajan-talks/",
+        "14 Diya Tale Andhera 01part-I, 42 min.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Diya Tale Andhera 01part-II, 37 min",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "diya-tale-andhera-01part-ii-37-min-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/devotional-bhajan-talks/",
+        "15 Diya Tale Andhera 01part-II, 37 min.mp3",
+        0
+      ],
+      null
+    ],
+    [
       "Dogen: the Zen Master",
       "English discourses",
       true,
@@ -653,6 +978,19 @@
         "https://archive.org/download/osho-audio-discourses-collection/OSHO_WORLD/English/Dogen%20the%20Zen%20Master%2001-08%20%E2%80%93%20Osho%20World/",
         "OSHO-Dogen_the_Zen_Master_{i}.mp3",
         2
+      ],
+      null
+    ],
+    [
+      "Dreams & Visions, Yoga-22, Last Q, 16 min",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "dreams-visions-yoga-22-last-q-16-min-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/book-qa-extracts/",
+        "37 Dreams & Visions, Yoga-22, Last Q, 16 min.mp3",
+        0
       ],
       null
     ],
@@ -943,6 +1281,19 @@
       null
     ],
     [
+      "Hosh ke teen sutra",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "hosh-ke-teen-sutra-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/standalone-wisdom-talks/",
+        "23 Hosh ke teen sutra.mp3",
+        0
+      ],
+      null
+    ],
+    [
       "Hsin Hsin Ming: The book of Nothing",
       "English discourses",
       true,
@@ -1125,6 +1476,19 @@
       null
     ],
     [
+      "Jeevan rahasya (Talk)",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "jeevan-rahasya-talk-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/standalone-wisdom-talks/",
+        "31 Jeevan rahasya.mp3",
+        0
+      ],
+      null
+    ],
+    [
       "Jeevan Sangeet",
       "Hindi discourses",
       true,
@@ -1268,6 +1632,32 @@
       null
     ],
     [
+      "Jyoti Se Jyoti Jale 05-A, 52min",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "jyoti-se-jyoti-jale-05-a-52min-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/devotional-bhajan-talks/",
+        "22 Jyoti Se Jyoti Jale 05-A, 52min.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Jyoti Se Jyoti Jale 05-B, 52min",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "jyoti-se-jyoti-jale-05-b-52min-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/devotional-bhajan-talks/",
+        "23 Jyoti Se Jyoti Jale 05-B, 52min.mp3",
+        0
+      ],
+      null
+    ],
+    [
       "Jyotish",
       "Hindi discourses",
       true,
@@ -1355,6 +1745,19 @@
         "https://archive.org/download/osho-audio-discourses-collection/OSHO_WORLD/Hindi/088-Kahe%20Hot%20Adheer%2001-19%20%E2%80%93%20Osho%20World/",
         "OSHO-Kahe_Hot_Adheer_{i}.mp3",
         2
+      ],
+      null
+    ],
+    [
+      "Kahe Hot Adheer 16, Q-1,41 min",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "kahe-hot-adheer-16-q-1-41-min-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/devotional-bhajan-talks/",
+        "09 Kahe Hot Adheer 16, Q-1,41 min.mp3",
+        0
       ],
       null
     ],
@@ -1528,6 +1931,71 @@
       null
     ],
     [
+      "Lali mere lal ki, KKMPP-19-A, 57min",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "lali-mere-lal-ki-kkmpp-19-a-57min-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/devotional-bhajan-talks/",
+        "12 Lali mere lal ki, KKMPP-19-A, 57min.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Lali mere lal ki, KKMPP-19-B, 47min",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "lali-mere-lal-ki-kkmpp-19-b-47min-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/devotional-bhajan-talks/",
+        "13 Lali mere lal ki, KKMPP-19-B, 47min.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Light in the Body, Beyond Enlightenment-22 Q-3, 15min",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "light-in-the-body-beyond-enlightenment-22-q-3-15min-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/book-qa-extracts/",
+        "34 Light in the Body, Beyond Enlightenment-22 Q-3, 15min.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Light, Life. Love-The Ultimate Alchemy-11A, 42min",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "light-life-love-the-ultimate-alchemy-11a-42min-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/book-qa-extracts/",
+        "35 Light, Life. Love-The Ultimate Alchemy-11A, 42min.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Light, Life. Love-The Ultimate Alchemy-11B, 40min",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "light-life-love-the-ultimate-alchemy-11b-40min-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/book-qa-extracts/",
+        "36 Light, Life. Love-The Ultimate Alchemy-11B, 40min.mp3",
+        0
+      ],
+      null
+    ],
+    [
       "Live Zen",
       "English discourses",
       true,
@@ -1550,6 +2018,32 @@
         "https://archive.org/download/osho-audio-discourses-collection/OSHO_WORLD/English/Ma%20Tzu%20The%20Empty%20Mirror%2001-10%20%E2%80%93%20Osho%20World/",
         "OSHO-Ma_Tzu_The_Empty_Mirror_{i}.mp3",
         2
+      ],
+      null
+    ],
+    [
+      "Mahal Bhaya Ujiyar, Ajhun Chet Gawar 03, 55min",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "mahal-bhaya-ujiyar-ajhun-chet-gawar-03-55min-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/devotional-bhajan-talks/",
+        "20 Mahal Bhaya Ujiyar, Ajhun Chet Gawar 03, 55min.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Mahatwakanksha se chutkara",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "mahatwakanksha-se-chutkara-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/standalone-wisdom-talks/",
+        "49 Mahatwakanksha se chutkara.mp3",
+        0
       ],
       null
     ],
@@ -1775,6 +2269,19 @@
       null
     ],
     [
+      "Nastikata Evam Aastikata",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "nastikata-evam-aastikata-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/standalone-wisdom-talks/",
+        "02 Nastikata Evam Aastikata.mp3",
+        0
+      ],
+      null
+    ],
+    [
       "Naye Bharat Ka Janm",
       "Hindi discourses",
       true,
@@ -1853,6 +2360,19 @@
       null
     ],
     [
+      "NISCHAL DHYAN YOG",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "nischal-dhyan-yog-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/meditation-techniques/",
+        "02-NISCHAL DHYAN YOG.mp3",
+        0
+      ],
+      null
+    ],
+    [
       "No Mind The Flowers of Eternity",
       "English discourses",
       true,
@@ -1918,6 +2438,19 @@
       null
     ],
     [
+      "OSHO, Jeewan k har Pal ko Jyotirmay kar do- GEET, 10",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "osho-jeewan-k-har-pal-ko-jyotirmay-kar-do-geet-10-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/devotional-bhajan-talks/",
+        "40 OSHO, Jeewan k har Pal ko Jyotirmay kar do- GEET, 10.mp3",
+        0
+      ],
+      null
+    ],
+    [
       "Pad Gungharoo Bandh",
       "Hindi discourses",
       true,
@@ -1940,6 +2473,19 @@
         "https://archive.org/download/osho-audio-discourses-collection/OSHO_WORLD/Hindi/125-Panth%20Prem%20Ko%20Atpato%2001-03%20%E2%80%93%20Osho%20World/",
         "OSHO-Panth_Prem_Ko_Atpato_{i}.mp3",
         2
+      ],
+      null
+    ],
+    [
+      "Partantrata se mukti",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "partantrata-se-mukti-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/standalone-wisdom-talks/",
+        "27 Partantrata se mukti.mp3",
+        0
       ],
       null
     ],
@@ -2031,6 +2577,19 @@
         "https://archive.org/download/osho-audio-discourses-collection/OSHO_WORLD/Hindi/132-Prabhu%20Mandir%20Ke%20Dwar%20Par%2001-10%20%E2%80%93%20Osho%20World/",
         "OSHO-Prabhu_Mandir_Ke_Dwar_Par_{i}.mp3",
         2
+      ],
+      null
+    ],
+    [
+      "Prakash ka parda, Ishavashya Upanishad-9,39",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "prakash-ka-parda-ishavashya-upanishad-9-39-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/book-qa-extracts/",
+        "33 Prakash ka parda, Ishavashya Upanishad-9,39.mp3",
+        0
       ],
       null
     ],
@@ -2412,6 +2971,19 @@
       null
     ],
     [
+      "Samyak aahar",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "samyak-aahar-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/standalone-wisdom-talks/",
+        "25 Samyak aahar.mp3",
+        0
+      ],
+      null
+    ],
+    [
       "Sanch Sanch So Sanch",
       "Hindi discourses",
       true,
@@ -2477,6 +3049,19 @@
       null
     ],
     [
+      "Satya ki bhasha moun",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "satya-ki-bhasha-moun-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/standalone-wisdom-talks/",
+        "29 Satya ki bhasha moun.mp3",
+        0
+      ],
+      null
+    ],
+    [
       "Satyam Shivam Sundram",
       "English discourses",
       true,
@@ -2516,6 +3101,305 @@
       null
     ],
     [
+      "Shiksha Aur Dharam",
+      "Hindi discourses",
+      true,
+      [
+        5,
+        "shiksha-aur-dharam-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/osho_new_discourses/shiksha-aur-dharam/",
+        "OSHO-Shiksha_Aur_Dharam_{i}.mp3",
+        2
+      ],
+      null
+    ],
+    [
+      "Shiksha Main Kranti 1/22",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "shiksha-main-kranti-1-22-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/osho_new_discourses/shiksha-main-kranti/",
+        "OSHO-Shiksha_Main_Kranti_04.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Shiksha Main Kranti 10/22",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "shiksha-main-kranti-10-22-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/osho_new_discourses/shiksha-main-kranti/",
+        "OSHO-Shiksha_Main_Kranti_16.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Shiksha Main Kranti 11/22",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "shiksha-main-kranti-11-22-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/osho_new_discourses/shiksha-main-kranti/",
+        "OSHO-Shiksha_Main_Kranti_17.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Shiksha Main Kranti 12/22",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "shiksha-main-kranti-12-22-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/osho_new_discourses/shiksha-main-kranti/",
+        "OSHO-Shiksha_Main_Kranti_18.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Shiksha Main Kranti 13/22",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "shiksha-main-kranti-13-22-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/osho_new_discourses/shiksha-main-kranti/",
+        "OSHO-Shiksha_Main_Kranti_19.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Shiksha Main Kranti 14/22",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "shiksha-main-kranti-14-22-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/osho_new_discourses/shiksha-main-kranti/",
+        "OSHO-Shiksha_Main_Kranti_20.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Shiksha Main Kranti 15/22",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "shiksha-main-kranti-15-22-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/osho_new_discourses/shiksha-main-kranti/",
+        "OSHO-Shiksha_Main_Kranti_21.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Shiksha Main Kranti 16/22",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "shiksha-main-kranti-16-22-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/osho_new_discourses/shiksha-main-kranti/",
+        "OSHO-Shiksha_Main_Kranti_22.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Shiksha Main Kranti 17/22",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "shiksha-main-kranti-17-22-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/osho_new_discourses/shiksha-main-kranti/",
+        "OSHO-Shiksha_Main_Kranti_23.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Shiksha Main Kranti 18/22",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "shiksha-main-kranti-18-22-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/osho_new_discourses/shiksha-main-kranti/",
+        "OSHO-Shiksha_Main_Kranti_24.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Shiksha Main Kranti 19/22",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "shiksha-main-kranti-19-22-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/osho_new_discourses/shiksha-main-kranti/",
+        "OSHO-Shiksha_Main_Kranti_25.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Shiksha Main Kranti 2/22",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "shiksha-main-kranti-2-22-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/osho_new_discourses/shiksha-main-kranti/",
+        "OSHO-Shiksha_Main_Kranti_06.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Shiksha Main Kranti 20/22",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "shiksha-main-kranti-20-22-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/osho_new_discourses/shiksha-main-kranti/",
+        "OSHO-Shiksha_Main_Kranti_26.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Shiksha Main Kranti 21/22",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "shiksha-main-kranti-21-22-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/osho_new_discourses/shiksha-main-kranti/",
+        "OSHO-Shiksha_Main_Kranti_27.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Shiksha Main Kranti 22/22",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "shiksha-main-kranti-22-22-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/osho_new_discourses/shiksha-main-kranti/",
+        "OSHO-Shiksha_Main_Kranti_28.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Shiksha Main Kranti 3/22",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "shiksha-main-kranti-3-22-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/osho_new_discourses/shiksha-main-kranti/",
+        "OSHO-Shiksha_Main_Kranti_07.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Shiksha Main Kranti 4/22",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "shiksha-main-kranti-4-22-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/osho_new_discourses/shiksha-main-kranti/",
+        "OSHO-Shiksha_Main_Kranti_10.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Shiksha Main Kranti 5/22",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "shiksha-main-kranti-5-22-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/osho_new_discourses/shiksha-main-kranti/",
+        "OSHO-Shiksha_Main_Kranti_11.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Shiksha Main Kranti 6/22",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "shiksha-main-kranti-6-22-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/osho_new_discourses/shiksha-main-kranti/",
+        "OSHO-Shiksha_Main_Kranti_12.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Shiksha Main Kranti 7/22",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "shiksha-main-kranti-7-22-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/osho_new_discourses/shiksha-main-kranti/",
+        "OSHO-Shiksha_Main_Kranti_13.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Shiksha Main Kranti 8/22",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "shiksha-main-kranti-8-22-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/osho_new_discourses/shiksha-main-kranti/",
+        "OSHO-Shiksha_Main_Kranti_14.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Shiksha Main Kranti 9/22",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "shiksha-main-kranti-9-22-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/osho_new_discourses/shiksha-main-kranti/",
+        "OSHO-Shiksha_Main_Kranti_15.mp3",
+        0
+      ],
+      null
+    ],
+    [
       "Shiv Sutra",
       "Hindi discourses",
       true,
@@ -2525,6 +3409,19 @@
         "https://archive.org/download/osho-audio-discourses-collection/OSHO_WORLD/Hindi/146-Shiv%20Sutra%2001-10%20%E2%80%93%20Osho%20World/",
         "OSHO-Shiv_Sutra_{i}.mp3",
         2
+      ],
+      null
+    ],
+    [
+      "Shri Krishna",
+      "Hindi discourses",
+      true,
+      [
+        6,
+        "shri-krishna-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/osho_new_discourses/sri-krishna/",
+        "Krishna%20(osho)%20({i}).mp3",
+        0
       ],
       null
     ],
@@ -2551,6 +3448,19 @@
         "https://archive.org/download/osho-audio-discourses-collection/OSHO_WORLD/Hindi/115-Neti%20Neti%20Shunya%20Ki%20Naon%2001-07%20%E2%80%93%20Osho%20World/",
         "OSHO-Shunya_Ki_Naon_{i}.mp3",
         2
+      ],
+      null
+    ],
+    [
+      "Shunya me Chand ka Rahasya, KSSJS-6,Q-3, 32 min",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "shunya-me-chand-ka-rahasya-kssjs-6-q-3-32-min-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/book-qa-extracts/",
+        "27 Shunya me Chand ka Rahasya, KSSJS-6,Q-3, 32 min.mp3",
+        0
       ],
       null
     ],
@@ -2603,6 +3513,32 @@
         "https://archive.org/download/osho-audio-discourses-collection/OSHO_WORLD/Hindi/166-Sukh%20Aur%20Shanti%2001-09%20%E2%80%93%20Osho%20World/",
         "OSHO-Sukh_Aur_Shanti_{i}.mp3",
         2
+      ],
+      null
+    ],
+    [
+      "Sukshm Sharir,Jin Khoja Tin Paiyan 17-A 44 min",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "sukshm-sharir-jin-khoja-tin-paiyan-17-a-44-min-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/book-qa-extracts/",
+        "24 Sukshm Sharir,Jin Khoja Tin Paiyan 17-A 44 min.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Sukshm Sharir,Jin Khoja Tin Paiyan 17-B 46 min",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "sukshm-sharir-jin-khoja-tin-paiyan-17-b-46-min-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/book-qa-extracts/",
+        "25 Sukshm Sharir,Jin Khoja Tin Paiyan 17-B 46 min.mp3",
+        0
       ],
       null
     ],
@@ -2672,6 +3608,32 @@
       null
     ],
     [
+      "Tamso ma Jyotirgamay, SMSB  04, Q-1, 60",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "tamso-ma-jyotirgamay-smsb-04-q-1-60-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/devotional-bhajan-talks/",
+        "30 Tamso ma Jyotirgamay, SMSB_ 04, Q-1, 60.mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Tamso ma Jyotirgamay, SMSB  04, Q-1B, 27",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "tamso-ma-jyotirgamay-smsb-04-q-1b-27-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/devotional-bhajan-talks/",
+        "31 Tamso ma Jyotirgamay, SMSB_ 04, Q-1B, 27.mp3",
+        0
+      ],
+      null
+    ],
+    [
       "Tamso Ma Jyotirgamaya",
       "Hindi discourses",
       true,
@@ -2681,6 +3643,97 @@
         "https://archive.org/download/osho-audio-discourses-collection/OSHO_WORLD/Hindi/172-Tamso%20Ma%20Jyotirgamaya%2001-08%20%E2%80%93%20Osho%20World/",
         "OSHO-Tamso_Ma_Jyotirgamaya_{i}.mp3",
         2
+      ],
+      null
+    ],
+    [
+      "Tantra Aur Kaam 1/7",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "tantra-aur-kaam-1-7-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/osho_new_discourses/tantra-aur-kaam/",
+        "Tantra Aur Kaam (Osho) (1).mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Tantra Aur Kaam 2/7",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "tantra-aur-kaam-2-7-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/osho_new_discourses/tantra-aur-kaam/",
+        "Tantra Aur Kaam (Osho) (2).mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Tantra Aur Kaam 3/7",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "tantra-aur-kaam-3-7-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/osho_new_discourses/tantra-aur-kaam/",
+        "Tantra Aur Kaam (Osho) (3).mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Tantra Aur Kaam 4/7",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "tantra-aur-kaam-4-7-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/osho_new_discourses/tantra-aur-kaam/",
+        "Tantra Aur Kaam (Osho) (4).mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Tantra Aur Kaam 5/7",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "tantra-aur-kaam-5-7-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/osho_new_discourses/tantra-aur-kaam/",
+        "Tantra Aur Kaam (Osho) (6).mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Tantra Aur Kaam 6/7",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "tantra-aur-kaam-6-7-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/osho_new_discourses/tantra-aur-kaam/",
+        "Tantra Aur Kaam (Osho) (7).mp3",
+        0
+      ],
+      null
+    ],
+    [
+      "Tantra Aur Kaam 7/7",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "tantra-aur-kaam-7-7-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/osho_new_discourses/tantra-aur-kaam/",
+        "Tantra Aur Kaam (Osho) (8).mp3",
+        0
       ],
       null
     ],
@@ -2724,6 +3777,19 @@
       null
     ],
     [
+      "Tao-77 & Andhkar me samadhi ZDDM-16 Q-1,40 (1)",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "tao-77-andhkar-me-samadhi-zddm-16-q-1-40-1-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/book-qa-extracts/",
+        "04 Tao-77 & Andhkar me samadhi ZDDM-16 Q-1,40 (1).mp3",
+        0
+      ],
+      null
+    ],
+    [
       "Tao: The Pathless Path",
       "English discourses",
       true,
@@ -2746,6 +3812,19 @@
         "https://archive.org/download/osho-audio-discourses-collection/OSHO_WORLD/English/Tao%20The%20Three%20Treasures%2001-39%20%E2%80%93%20Osho%20World/",
         "OSHO-Tao_The_Three_Treasures_1_{i}.mp3",
         2
+      ],
+      null
+    ],
+    [
+      "Teesri ankh ka rahasya, Gahre Pani Paith-3 part-2.46",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "teesri-ankh-ka-rahasya-gahre-pani-paith-3-part-2-46-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/book-qa-extracts/",
+        "06 Teesri ankh ka rahasya, Gahre Pani Paith-3 part-2.46.mp3",
+        0
       ],
       null
     ],
@@ -3413,6 +4492,19 @@
       null
     ],
     [
+      "Tilak-Teeka ka vigyan, Gahre pani paith-3 part-1,44",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "tilak-teeka-ka-vigyan-gahre-pani-paith-3-part-1-44-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/book-qa-extracts/",
+        "05 Tilak-Teeka ka vigyan, Gahre pani paith-3 part-1,44.mp3",
+        0
+      ],
+      null
+    ],
+    [
       "Trisha Gai Ek Boond Se",
       "Hindi discourses",
       true,
@@ -3543,6 +4635,19 @@
       null
     ],
     [
+      "Vipassana Dhyan- Pravachan",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "vipassana-dhyan-pravachan-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/meditation-techniques/",
+        "03 Vipassana Dhyan- Pravachan.mp3",
+        0
+      ],
+      null
+    ],
+    [
       "Vyast Jeevan Mein Ishwar Ki Khoj",
       "Hindi discourses",
       true,
@@ -3630,6 +4735,19 @@
         "https://archive.org/download/osho-audio-discourses-collection/OSHO_WORLD/English/Yoga%20The%20Alpha%20%26%20Omega%2001-100%20%E2%80%93%20Osho%20World/",
         "OSHO-Yoga_The_Alpha__Omega_01_{i}.mp3",
         2
+      ],
+      null
+    ],
+    [
+      "YOUN-MUDRA-KAAMURJA KE URDHVAGAMAN KI VIDHI",
+      "Hindi discourses",
+      true,
+      [
+        1,
+        "youn-mudra-kaamurja-ke-urdhvagaman-ki-vidhi-{i}",
+        "https://archive.org/download/osho-shiksha-main-kranti-22/short-disclosures/meditation-techniques/",
+        "03-YOUN-MUDRA-KAAMURJA KE URDHVAGAMAN KI VIDHI.mp3",
+        0
       ],
       null
     ],

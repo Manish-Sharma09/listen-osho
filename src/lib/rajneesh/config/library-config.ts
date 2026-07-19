@@ -7,7 +7,7 @@ const nameSortOption = {
 } as const
 
 const includesTerm = (target: string | undefined | null, term: string) =>
-	target?.toLowerCase().includes(term)
+	target?.toLowerCase().includes(term.toLowerCase())
 
 const artistsIncludesTerm = (item: { artists: string[] | undefined }, term: string) =>
 	item.artists?.some((artist) => includesTerm(artist, term)) ?? false

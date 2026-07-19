@@ -1,5 +1,8 @@
 import { getCatalog } from '$lib/rajneesh/stores/catalog.svelte.ts'
-import { getPersistedHindiOnly } from '$lib/stores/main/store.svelte.ts'
+import {
+	type ContentLanguage,
+	getPersistedContentLanguage,
+} from '$lib/stores/main/store.svelte.ts'
 import type { RemoteFile } from '$lib/rajneesh/types.ts'
 import type { Track } from '$lib/library/types.ts'
 
@@ -71,18 +74,19 @@ function getFilteredTracks(): Track[] {
 	const catalog = getCatalog()
 	if (!catalog || catalog.tracks.length === 0) return []
 
-	const hindiOnly = getPersistedHindiOnly()
-	if (!hindiOnly) return catalog.tracks
+	const contentLanguage = getPersistedContentLanguage()
+	if (contentLanguage === 'both') return catalog.tracks
 
 	return catalog.tracks.filter((t) => {
 		const file = t.file as RemoteFile | undefined
-		return file?.url && !isEnglishTrack(file.url)
+		const isEnglish = !!file?.url && isEnglishTrack(file.url)
+		return contentLanguage === 'hindi' ? !isEnglish : isEnglish
 	})
 }
 
 // Module-level growable list — survives component remounts
 const items: ShortItem[] = []
-let generatedWithHindiOnly: boolean | null = null
+let generatedWithContentLanguage: ContentLanguage | null = null
 
 function generateBatch(count: number): ShortItem[] {
 	const tracks = getFilteredTracks()
@@ -120,14 +124,14 @@ function generateBatch(count: number): ShortItem[] {
 
 /** Get all currently loaded shorts */
 export function getShortsItems(): ShortItem[] {
-	const currentHindiOnly = getPersistedHindiOnly()
+	const currentContentLanguage = getPersistedContentLanguage()
 	// Reset if the language filter changed since last generation
-	if (generatedWithHindiOnly !== null && generatedWithHindiOnly !== currentHindiOnly) {
+	if (generatedWithContentLanguage !== null && generatedWithContentLanguage !== currentContentLanguage) {
 		items.length = 0
 	}
 	// Seed initial batch if empty
 	if (items.length === 0) {
-		generatedWithHindiOnly = currentHindiOnly
+		generatedWithContentLanguage = currentContentLanguage
 		items.push(...generateBatch(PAGE_SIZE))
 	}
 	return items
@@ -181,5 +185,5 @@ export function ensureShortByTrackId(trackId: string, startFrom?: number): numbe
 /** Reset everything (full page reload or setting change) */
 export function resetShortsData(): void {
 	items.length = 0
-	generatedWithHindiOnly = null
+	generatedWithContentLanguage = null
 }

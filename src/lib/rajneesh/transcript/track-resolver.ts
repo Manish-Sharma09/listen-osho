@@ -8,6 +8,28 @@ import type { Track } from '$lib/library/types.ts'
 
 const BY_OSHO = '-by-osho-'
 
+// Transcript folder slugs whose spelling drifted from the catalog's album slug
+// (transliteration variants of the same Hindi title). Maps transcript-derived
+// prefix -> catalog trackIdTpl prefix so those discourses still resolve.
+// Duplicated in scripts/build-pagefind-index.ts to allow standalone operation.
+const TRANSCRIPT_PREFIX_ALIASES: Record<string, string> = {
+	'adhyatam-upanishad': 'adhyatma-upanishad',
+	'ajhun-chet-ganwar': 'ajhun-chet-gawar',
+	'ashtavakra-maha-geeta': 'ashtavakra-mahagitaa',
+	'bahuri-na-aiso-daon': 'bahuri-na-aisa-daanv',
+	'birhani-mandir-diyana-baar': 'birhani-mandir-diyana-bar',
+	'deepak-bara-naam-ka': 'deepak-bara-nam-ka',
+	'dharam-sadhana-ke-sutra': 'dharm-sadhana-ke-sutra',
+	'jeevan-hi-hain-prabhu': 'jeevan-hi-hai-prabhu',
+	'jevan-rahasya': 'jeevan-rahasya',
+	'kahe-kabir-main-pura-paya': 'kahai-kabir-main-pura-paya',
+	'nam-sumir-man-bavre': 'naam-sumir-man-bavre',
+	'piya-kokhojan-main-chali': 'piya-ko-khojan-main-chali',
+	'trisha-gai-ek-bund-se': 'trisha-gai-ek-boond-se',
+	'utsav-amar-jati-anand-amar-gotar': 'utsav-amar-jati-anand-amar-gotra',
+	'vysat-jeevan-main-ishwar-ki-khoj': 'vyast-jeevan-mein-ishwar-ki-khoj',
+}
+
 /**
  * Converts a transcript discourse slug to the catalog track UUID.
  * Catalog uses unpadded track numbers (e.g. "hari-bolo-hari-bol-1")
@@ -26,7 +48,8 @@ export function transcriptPathToTrackUuid(
 	const num = parseInt(numStr, 10)
 	if (Number.isNaN(num)) return null
 
-	return `${prefix}-${num}`
+	const canonicalPrefix = TRANSCRIPT_PREFIX_ALIASES[prefix] ?? prefix
+	return `${canonicalPrefix}-${num}`
 }
 
 /**

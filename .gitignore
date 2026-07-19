@@ -2,9 +2,12 @@
 node_modules
 build
 .generated
+generated
 static/pagefind
+scripts/.scrape-english-transcripts-report.json
 !.env.example
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 coverage
 /.idea
+tsconfig.tsbuildinfo

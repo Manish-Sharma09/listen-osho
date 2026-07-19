@@ -28,6 +28,27 @@ const hashStringToId = (str: string): number => {
 	return Math.abs(hash) + 1000000
 }
 
+// Transcript folder slugs whose spelling drifted from the catalog's album slug
+// (transliteration variants of the same Hindi title). Maps transcript-derived
+// prefix -> catalog trackIdTpl prefix so those discourses still resolve.
+const TRANSCRIPT_PREFIX_ALIASES: Record<string, string> = {
+	'adhyatam-upanishad': 'adhyatma-upanishad',
+	'ajhun-chet-ganwar': 'ajhun-chet-gawar',
+	'ashtavakra-maha-geeta': 'ashtavakra-mahagitaa',
+	'bahuri-na-aiso-daon': 'bahuri-na-aisa-daanv',
+	'birhani-mandir-diyana-baar': 'birhani-mandir-diyana-bar',
+	'deepak-bara-naam-ka': 'deepak-bara-nam-ka',
+	'dharam-sadhana-ke-sutra': 'dharm-sadhana-ke-sutra',
+	'jeevan-hi-hain-prabhu': 'jeevan-hi-hai-prabhu',
+	'jevan-rahasya': 'jeevan-rahasya',
+	'kahe-kabir-main-pura-paya': 'kahai-kabir-main-pura-paya',
+	'nam-sumir-man-bavre': 'naam-sumir-man-bavre',
+	'piya-kokhojan-main-chali': 'piya-ko-khojan-main-chali',
+	'trisha-gai-ek-bund-se': 'trisha-gai-ek-boond-se',
+	'utsav-amar-jati-anand-amar-gotar': 'utsav-amar-jati-anand-amar-gotra',
+	'vysat-jeevan-main-ishwar-ki-khoj': 'vyast-jeevan-mein-ishwar-ki-khoj',
+}
+
 function transcriptPathToTrackUuid(discourseSlug: string): string | null {
 	const lastDash = discourseSlug.lastIndexOf('-')
 	if (lastDash === -1) return null
@@ -35,7 +56,8 @@ function transcriptPathToTrackUuid(discourseSlug: string): string | null {
 	const numStr = discourseSlug.slice(lastDash + 1)
 	const num = parseInt(numStr, 10)
 	if (Number.isNaN(num)) return null
-	return `${prefix}-${num}`
+	const canonicalPrefix = TRANSCRIPT_PREFIX_ALIASES[prefix] ?? prefix
+	return `${canonicalPrefix}-${num}`
 }
 
 interface TrackMeta {

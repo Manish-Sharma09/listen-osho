@@ -12,8 +12,10 @@
 	import ContinueListeningCard from '$lib/rajneesh/components/ContinueListeningCard.svelte'
 	import InstallAppBanner from '$lib/rajneesh/components/InstallAppBanner.svelte'
 	import HomeBookmarksSection from '$lib/rajneesh/pages/home/HomeBookmarksSection.svelte'
+	import { useMainStore } from '$lib/stores/main/use-store.ts'
 
 	const player = usePlayer()
+	const mainStore = useMainStore()
 	const DISCOVER_TOPICS_STORAGE_KEY = 'rajneesh-home-discover-topics'
 	const DISCOVER_TOPICS = [
 		'मुल्ला',
@@ -381,8 +383,138 @@
 		'दृष्टा',
 		'द्वंद्व',
 	] as const
+	// Independent English-language mirror of DISCOVER_TOPICS/DISCOVER_TOPIC_PRIORITY below.
+	// These are literal English words scored directly against the English transcripts
+	// (see scripts/generate-transcript-tags.ts) - no relation to the Hindi tags, and no
+	// English-label lookup for Hindi tags: each language keeps its own catalog, priority
+	// order, tag identifier, and randomization pool.
+	const DISCOVER_TOPICS_EN = [
+		'Love',
+		'God',
+		'Mind',
+		'Master',
+		'Death',
+		'Truth',
+		'Meditation',
+		'Silence',
+		'Ego',
+		'Disciple',
+		'Zen',
+		'Freedom',
+		'Fear',
+		'Enlightenment',
+		'Awareness',
+		'Witness',
+		'Sannyas',
+		'Society',
+		'War',
+		'Politics',
+		'Communism',
+		'Money',
+		'Marriage',
+		'Family',
+		'Anger',
+		'Dance',
+		'Poetry',
+		'Music',
+		'Art',
+		'Humor',
+		'Sufi',
+		'Tao',
+		'Bodhidharma',
+		'Ecstasy',
+		'Psychology',
+		'Consciousness',
+		'Existence',
+		'Religion',
+		'Jesus',
+		'Socrates',
+		'Buddha',
+		'Krishnamurti',
+		'Gurdjieff',
+		'Freud',
+		'Jung',
+		'Marx',
+		'Lenin',
+		'Nietzsche',
+		'Hitler',
+		'Karma',
+		'Dharma',
+		'Nirvana',
+		'Yoga',
+		'Tantra',
+		'Kundalini',
+		'Baul',
+		'Hasid',
+		'Samurai',
+		'Compassion',
+		'Understanding',
+		'Desire',
+		'Courage',
+		'Trust',
+		'Doubt',
+		'Creativity',
+		'Celebration',
+		'Discipline',
+		'Rebellion',
+		'Surrender',
+		'Devotion',
+		'Prayer',
+		'Education',
+		'Children',
+		'Woman',
+		'Body',
+		'Sleep',
+		'Dream',
+		'Science',
+		'India',
+		'Violence',
+	] as const
 	const DISCOVER_TOPICS_COUNT = 10
 	const DISCOVER_TAGS_URL = '/rajneesh/discover-tags.json'
+	const DISCOVER_TAGS_URL_EN = '/rajneesh/discover-tags-en.json'
+	const DISCOVER_TOPIC_PRIORITY_EN = [
+		'Love',
+		'Mind',
+		'God',
+		'Master',
+		'Death',
+		'Truth',
+		'Meditation',
+		'Silence',
+		'Ego',
+		'Disciple',
+		'Zen',
+		'Freedom',
+		'Fear',
+		'Enlightenment',
+		'Awareness',
+		'Witness',
+		'Sannyas',
+		'Society',
+		'War',
+		'Politics',
+		'Communism',
+		'Money',
+		'Marriage',
+		'Family',
+		'Anger',
+		'Dance',
+		'Poetry',
+		'Music',
+		'Art',
+		'Humor',
+		'Sufi',
+		'Tao',
+		'Bodhidharma',
+		'Ecstasy',
+		'Psychology',
+		'Consciousness',
+		'Existence',
+		'Religion',
+		'Jesus',
+		'Socrates',
+	] as const
 	const DISCOVER_TOPIC_PRIORITY = [
 		'बुद्ध',
 		'स्त्री',
@@ -435,6 +567,13 @@
 
 	const FALLBACK_DISCOVER_TOPIC_CATALOG: DiscoverTopic[] = DISCOVER_TOPICS.filter((topic) =>
 		DISCOVER_TOPIC_PRIORITY.includes(topic as (typeof DISCOVER_TOPIC_PRIORITY)[number]),
+	).map((topic) => ({
+		tag: topic,
+		documents: 0,
+		hits: 0,
+	}))
+	const FALLBACK_DISCOVER_TOPIC_CATALOG_EN: DiscoverTopic[] = DISCOVER_TOPICS_EN.filter((topic) =>
+		DISCOVER_TOPIC_PRIORITY_EN.includes(topic as (typeof DISCOVER_TOPIC_PRIORITY_EN)[number]),
 	).map((topic) => ({
 		tag: topic,
 		documents: 0,
@@ -579,11 +718,25 @@
 
 	const resumeCards = $derived(latestResumeQuery.value ?? [])
 	let resumeExpanded = $state(false)
-	let discoverTopicCatalog = $state<DiscoverTopic[]>(FALLBACK_DISCOVER_TOPIC_CATALOG)
+	let discoverTopicCatalogHi = $state<DiscoverTopic[]>(FALLBACK_DISCOVER_TOPIC_CATALOG)
+	let discoverTopicCatalogEn = $state<DiscoverTopic[]>(FALLBACK_DISCOVER_TOPIC_CATALOG_EN)
 	let discoverTopics = $state<string[]>([])
 	let previousDiscoverTopics = $state<string[]>([])
 	let discoverTagsLoaded = $state(true)
-	let discoverTagsLoadStarted = false
+	let discoverTagsLoadStartedHi = false
+	let discoverTagsLoadStartedEn = false
+	// Which pool random picks are drawn from - and which language's identifiers
+	// discoverTopics holds - follows the user's content language selection directly.
+	const discoverTopicCatalog = $derived(
+		mainStore.contentLanguage === 'english'
+			? discoverTopicCatalogEn
+			: mainStore.contentLanguage === 'hindi'
+				? discoverTopicCatalogHi
+				: [...discoverTopicCatalogHi, ...discoverTopicCatalogEn],
+	)
+	const discoverTopicsStorageKey = $derived(
+		`${DISCOVER_TOPICS_STORAGE_KEY}-${mainStore.contentLanguage}`,
+	)
 	const discoverTopicCatalogByTag = $derived(
 		new Map(discoverTopicCatalog.map((topic) => [topic.tag, topic])),
 	)
@@ -600,9 +753,13 @@
 	const getDiscoverTopicCountLabel = (documents: number) =>
 		documents > 0 ? `${documents} talks` : 'Explore'
 
-	const buildDiscoverTopicCatalog = (globalTags: DiscoverTopic[]) => {
+	const buildDiscoverTopicCatalog = (
+		globalTags: DiscoverTopic[],
+		priorityTags: readonly string[],
+		fallback: DiscoverTopic[],
+	) => {
 		const priorityIndex = new Map<string, number>(
-			DISCOVER_TOPIC_PRIORITY.map((tag, index) => [tag, index]),
+			priorityTags.map((tag, index) => [tag, index]),
 		)
 		const filtered = globalTags
 			.filter((topic) => priorityIndex.has(topic.tag))
@@ -618,7 +775,7 @@
 				return b.hits - a.hits
 			})
 
-		return filtered.length > 0 ? filtered : FALLBACK_DISCOVER_TOPIC_CATALOG
+		return filtered.length > 0 ? filtered : fallback
 	}
 
 	const parseDiscoverTagsResponse = (json: DiscoverTagsResponse): DiscoverTopic[] => {
@@ -655,7 +812,7 @@
 			return false
 		}
 
-		const raw = localStorage.getItem(DISCOVER_TOPICS_STORAGE_KEY)
+		const raw = localStorage.getItem(discoverTopicsStorageKey)
 		if (!raw) {
 			return false
 		}
@@ -688,7 +845,7 @@
 			return
 		}
 
-		localStorage.setItem(DISCOVER_TOPICS_STORAGE_KEY, JSON.stringify(discoverTopics))
+		localStorage.setItem(discoverTopicsStorageKey, JSON.stringify(discoverTopics))
 	}
 
 	const shuffleTags = (tags: string[]) => {
@@ -791,11 +948,11 @@
 	})
 
 	$effect(() => {
-		if (discoverTagsLoadStarted || typeof fetch === 'undefined') {
+		if (discoverTagsLoadStartedHi || typeof fetch === 'undefined') {
 			return
 		}
 
-		discoverTagsLoadStarted = true
+		discoverTagsLoadStartedHi = true
 
 		void (async () => {
 			try {
@@ -806,9 +963,42 @@
 
 				const json = (await response.json()) as DiscoverTagsResponse
 				const globalTags = parseDiscoverTagsResponse(json)
-				discoverTopicCatalog = buildDiscoverTopicCatalog(globalTags)
+				discoverTopicCatalogHi = buildDiscoverTopicCatalog(
+					globalTags,
+					DISCOVER_TOPIC_PRIORITY,
+					FALLBACK_DISCOVER_TOPIC_CATALOG,
+				)
 			} catch {
-				discoverTopicCatalog = FALLBACK_DISCOVER_TOPIC_CATALOG
+				discoverTopicCatalogHi = FALLBACK_DISCOVER_TOPIC_CATALOG
+			} finally {
+				discoverTagsLoaded = true
+			}
+		})()
+	})
+
+	$effect(() => {
+		if (discoverTagsLoadStartedEn || typeof fetch === 'undefined') {
+			return
+		}
+
+		discoverTagsLoadStartedEn = true
+
+		void (async () => {
+			try {
+				const response = await fetch(DISCOVER_TAGS_URL_EN)
+				if (!response.ok) {
+					throw new Error('Could not load discover tags.')
+				}
+
+				const json = (await response.json()) as DiscoverTagsResponse
+				const globalTags = parseDiscoverTagsResponse(json)
+				discoverTopicCatalogEn = buildDiscoverTopicCatalog(
+					globalTags,
+					DISCOVER_TOPIC_PRIORITY_EN,
+					FALLBACK_DISCOVER_TOPIC_CATALOG_EN,
+				)
+			} catch {
+				discoverTopicCatalogEn = FALLBACK_DISCOVER_TOPIC_CATALOG_EN
 			} finally {
 				discoverTagsLoaded = true
 			}

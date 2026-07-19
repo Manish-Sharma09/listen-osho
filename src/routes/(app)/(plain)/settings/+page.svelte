@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Button from '$lib/components/Button.svelte'
 	import Icon from '$lib/components/icon/Icon.svelte'
+	import RadioGroup from '$lib/components/RadioGroup.svelte'
 	import Select from '$lib/components/Select.svelte'
 	import Separator from '$lib/components/Separator.svelte'
 	import Spinner from '$lib/components/Spinner.svelte'
@@ -16,7 +17,11 @@
 	import { navigateToExternal } from '$lib/helpers/utils/navigate.ts'
 	import { isRajneeshEnabled } from '$lib/rajneesh/feature-flags.ts'
 	import { getCatalog, refreshRajneeshCatalog } from '$lib/rajneesh/index.ts'
-	import type { AppMotionOption, AppThemeOption } from '$lib/stores/main/store.svelte.ts'
+	import type {
+		AppMotionOption,
+		AppThemeOption,
+		ContentLanguage,
+	} from '$lib/stores/main/store.svelte.ts'
 	import { getLocale, type Locale, setLocale } from '$paraglide/runtime.js'
 	import DirectoriesList from './components/DirectoriesList.svelte'
 	import InstallAppBanner from './components/InstallAppBanner.svelte'
@@ -66,6 +71,12 @@
 
 	const languageOptions: { name: string; value: Locale }[] = [
 		{ name: 'English (EN)', value: 'en' },
+	]
+
+	const contentLanguageOptions: { name: string; value: ContentLanguage }[] = [
+		{ name: 'Hindi', value: 'hindi' },
+		{ name: 'English', value: 'english' },
+		{ name: 'Both', value: 'both' },
 	]
 
 	const updateMainColor = debounce((value: string | null) => {
@@ -203,15 +214,18 @@
 {#if isRajneeshEnabled()}
 	<section class="card settings-max-width mx-auto mt-6 w-full text-body-lg">
 		<div class="px-4 pt-4 text-title-sm">Content</div>
-		<div class="flex items-center justify-between p-4">
-			<div class="flex flex-col">
-				<div>Hindi only</div>
-				<div class="text-body-sm text-onSurfaceVariant">
-					Hide English discourses
-				</div>
+		<div class="flex flex-col p-4">
+			<div>Discourse language</div>
+			<div class="mb-4 text-body-sm text-onSurfaceVariant">
+				Choose which discourses to show
 			</div>
 
-			<Switch bind:checked={mainStore.hindiOnly} />
+			<RadioGroup
+				bind:selected={mainStore.contentLanguage}
+				items={contentLanguageOptions}
+				key="value"
+				labelKey="name"
+			/>
 		</div>
 	</section>
 {/if}
