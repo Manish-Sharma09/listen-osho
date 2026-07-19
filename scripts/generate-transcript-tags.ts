@@ -9,6 +9,7 @@ const ROOT = path.resolve(__dirname, '..')
 const TRANSCRIPTS_DIR = path.join(ROOT, 'static', 'rajneesh', 'transcripts')
 const ANALYSIS_OUTPUT_PATH = path.join(ROOT, 'generated', 'transcript-tags.analysis.json')
 const DISCOVER_OUTPUT_PATH = path.join(ROOT, 'static', 'rajneesh', 'discover-tags.json')
+const DISCOVER_OUTPUT_PATH_EN = path.join(ROOT, 'static', 'rajneesh', 'discover-tags-en.json')
 const HOME_PAGE_PATH = path.join(ROOT, 'src', 'lib', 'rajneesh', 'pages', 'home', 'Home.svelte')
 
 type TagDefinition = {
@@ -198,7 +199,9 @@ const DISCOVER_TOPIC_CATALOG = extractConstArray(homePageSource, 'DISCOVER_TOPIC
 const HOME_DISCOVER_PRIORITY_TAGS = extractConstArray(homePageSource, 'DISCOVER_TOPIC_PRIORITY')
 
 function countVariantOccurrences(text: string, variant: string): number {
-	const pattern = new RegExp(`(?<!${LETTER_OR_MARK})${escapeRegex(variant)}(?!${LETTER_OR_MARK})`, 'gu')
+	// 'i' is a no-op for Devanagari variants but lets the same matcher handle
+	// English variants (transcript headings are often ALL CAPS).
+	const pattern = new RegExp(`(?<!${LETTER_OR_MARK})${escapeRegex(variant)}(?!${LETTER_OR_MARK})`, 'giu')
 	return [...text.matchAll(pattern)].length
 }
 
@@ -274,21 +277,91 @@ function buildGlobalTags(transcriptResults: TranscriptResult[]): GlobalTag[] {
 		})
 }
 
-function buildDiscoverPayload(texts: string[]) {
-	const priorityIndex = new Map(HOME_DISCOVER_PRIORITY_TAGS.map((tag, index) => [tag, index]))
+// English-language equivalents for Discover topics that are also the subject of
+// Osho's English-language discourse series (proper nouns, schools, texts). A
+// transcript in either language counts toward the same Hindi topic tile.
+const TOPIC_ENGLISH_VARIANTS: Record<string, string[]> = {
+	मुल्ला: ['Mulla'],
+	नसरुद्दीन: ['Nasruddin', 'Nasrudin'],
+	बुद्ध: ['Buddha', 'Buddhas', 'Buddhahood'],
+	पतंजलि: ['Patanjali'],
+	गोरख: ['Gorakh', 'Gorakhnath'],
+	कबीर: ['Kabir'],
+	मीरा: ['Meera', 'Mira'],
+	सहजोबाई: ['Sahajo Bai', 'Sahajobai'],
+	मलूकदास: ['Malukdas', 'Maluk Das'],
+	फरीद: ['Farid'],
+	दयानंद: ['Dayanand'],
+	कृष्ण: ['Krishna'],
+	जीसस: ['Jesus', 'Christ'],
+	लाओत्से: ['Lao Tzu', 'Laotzu', 'Lao-tzu'],
+	जरथुस्त्र: ['Zarathustra'],
+	सुकरात: ['Socrates'],
+	हेराक्लीतुस: ['Heraclitus'],
+	जिब्रान: ['Gibran'],
+	खैयाम: ['Khayyam'],
+	राबिया: ['Rabiya', 'Rabia'],
+	बोधिधर्म: ['Bodhidharma'],
+	नागार्जुन: ['Nagarjuna'],
+	शंकर: ['Shankara'],
+	महावीर: ['Mahavir', 'Mahavira'],
+	मोहम्मद: ['Mohammed', 'Muhammad'],
+	उपनिषद: ['Upanishad', 'Upanishads'],
+	गीता: ['Gita', 'Bhagavad Gita'],
+	धम्मपद: ['Dhammapada'],
+	तंत्र: ['Tantra'],
+	योग: ['Yoga'],
+	सांख्य: ['Sankhya'],
+	अद्वैत: ['Advaita'],
+	सूफी: ['Sufi', 'Sufis', 'Sufism'],
+	झेन: ['Zen'],
+	ताओ: ['Tao'],
+	हसीद: ['Hasid', 'Hasidism', 'Hasidic'],
+	सामुराई: ['Samurai'],
+	बाऊल: ['Baul'],
+	नानक: ['Nanak'],
+	मंसूर: ['Mansoor'],
+	शम्स: ['Shams'],
+	रूमी: ['Rumi'],
+	अत्तार: ['Attar'],
+	बाशो: ['Basho'],
+	इक्कायू: ['Ikkyu'],
+	हकुइन: ['Hakuin'],
+	दोगेन्: ['Dogen'],
+	बोधिसत्व: ['Bodhisattva'],
+	अर्हत: ['Arhat'],
+	तीर्थंकर: ['Tirthankar', 'Tirthankara'],
+	निर्वाण: ['Nirvana'],
+	मोक्ष: ['Moksha'],
+	संन्यास: ['Sannyas', 'Sannyasin'],
+	समाधि: ['Samadhi'],
+	करुणा: ['compassion'],
+	चेतना: ['consciousness'],
+	साक्षी: ['witness'],
+}
+
+function buildDiscoverPayload(
+	texts: string[],
+	topicCatalog: string[],
+	priorityTags: string[],
+	variantsByTag: Record<string, string[]>,
+	stopTags: Set<string>,
+) {
+	const priorityIndex = new Map(priorityTags.map((tag, index) => [tag, index]))
 	const discoverStats = new Map<string, { documents: number; hits: number }>()
 
-	for (const tag of DISCOVER_TOPIC_CATALOG) {
+	for (const tag of topicCatalog) {
+		const variants = [tag, ...(variantsByTag[tag] ?? [])]
 		let documents = 0
 		let hits = 0
 		for (const text of texts) {
-			const tagHits = countVariantOccurrences(text, tag)
+			const tagHits = variants.reduce((sum, variant) => sum + countVariantOccurrences(text, variant), 0)
 			if (tagHits === 0) continue
 			documents += 1
 			hits += tagHits
 		}
 
-		if (documents === 0 || DISCOVER_STOP_TAGS.has(tag)) {
+		if (documents === 0 || stopTags.has(tag)) {
 			continue
 		}
 
@@ -314,6 +387,27 @@ function buildDiscoverPayload(texts: string[]) {
 		v: 1,
 		tags,
 	}
+}
+
+// Independent English tag catalog - scored directly against the literal English
+// words (no relation to DISCOVER_TOPIC_CATALOG/TOPIC_ENGLISH_VARIANTS above, which
+// exist only to let English discourse text also count toward the Hindi tags).
+const DISCOVER_TOPIC_CATALOG_EN = extractConstArray(homePageSource, 'DISCOVER_TOPICS_EN')
+const HOME_DISCOVER_PRIORITY_TAGS_EN = extractConstArray(homePageSource, 'DISCOVER_TOPIC_PRIORITY_EN')
+
+// Simple plural variants for the English tags that are common nouns (skipped for
+// proper nouns and words that are already invariant in this form).
+const ENGLISH_TAG_VARIANTS: Record<string, string[]> = {
+	God: ['Gods'],
+	Master: ['Masters'],
+	Disciple: ['Disciples'],
+	Dream: ['Dreams'],
+	Fear: ['Fears'],
+	Child: ['Children'],
+	Children: ['Child'],
+	Woman: ['Women'],
+	Desire: ['Desires'],
+	Doubt: ['Doubts'],
 }
 
 function main() {
@@ -348,16 +442,32 @@ function main() {
 		globalTags,
 		transcripts: transcriptResults,
 	}
-	const discoverOutput = buildDiscoverPayload(transcriptTexts)
+	const discoverOutput = buildDiscoverPayload(
+		transcriptTexts,
+		DISCOVER_TOPIC_CATALOG,
+		HOME_DISCOVER_PRIORITY_TAGS,
+		TOPIC_ENGLISH_VARIANTS,
+		DISCOVER_STOP_TAGS,
+	)
+	const discoverOutputEn = buildDiscoverPayload(
+		transcriptTexts,
+		DISCOVER_TOPIC_CATALOG_EN,
+		HOME_DISCOVER_PRIORITY_TAGS_EN,
+		ENGLISH_TAG_VARIANTS,
+		new Set(),
+	)
 
 	fs.mkdirSync(path.dirname(ANALYSIS_OUTPUT_PATH), { recursive: true })
 	fs.writeFileSync(ANALYSIS_OUTPUT_PATH, `${JSON.stringify(analysisOutput, null, 2)}\n`, 'utf8')
 	fs.writeFileSync(DISCOVER_OUTPUT_PATH, JSON.stringify(discoverOutput), 'utf8')
+	fs.writeFileSync(DISCOVER_OUTPUT_PATH_EN, JSON.stringify(discoverOutputEn), 'utf8')
 
 	console.log(`Processed ${processedFiles} transcripts`)
 	console.log(`Wrote ${ANALYSIS_OUTPUT_PATH}`)
 	console.log(`Wrote ${DISCOVER_OUTPUT_PATH}`)
 	console.log(`Discover tags: ${discoverOutput.tags.length}`)
+	console.log(`Wrote ${DISCOVER_OUTPUT_PATH_EN}`)
+	console.log(`Discover tags (en): ${discoverOutputEn.tags.length}`)
 }
 
 main()

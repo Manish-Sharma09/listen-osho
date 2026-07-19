@@ -9,6 +9,7 @@
 		highlightExcerpt,
 	} from '$lib/rajneesh/transcript/excerpt.ts'
 	import { romanToDevanagariForSearch } from '$lib/rajneesh/transcript/roman-to-devanagari.ts'
+	import { useMainStore } from '$lib/stores/main/use-store.ts'
 
 	interface Props {
 		searchTerm: string
@@ -17,6 +18,7 @@
 	const { searchTerm }: Props = $props()
 
 	const player = usePlayer()
+	const mainStore = useMainStore()
 
 	const PAGE_SIZE = 20
 
@@ -32,6 +34,20 @@
 				transcriptPath?: string
 			}
 		}>
+	}
+
+	type PagefindSearchResult = {
+		results?: PagefindResult[]
+	}
+
+	type PagefindModule = {
+		options?: (opts: Record<string, unknown>) => Promise<void>
+		init?: () => void
+		debouncedSearch: (
+			term: string,
+			opts: Record<string, unknown>,
+			debounceMs: number,
+		) => Promise<PagefindSearchResult | null>
 	}
 
 	type DisplayItem = {
@@ -95,6 +111,7 @@
 	let processedResults = $state<Array<DisplayItem | null | undefined>>([])
 	let loadedRawCount = $state(0)
 	let effectiveSearchTerm = $state('')
+	let searchedInHindi = $state(false)
 	let error = $state<string | null>(null)
 	let sentinelEl: HTMLDivElement | null = $state(null)
 	let readDialogItem = $state<DisplayItem | null>(null)
@@ -136,6 +153,7 @@
 			totalCount = 0
 			loadedRawCount = 0
 			effectiveSearchTerm = ''
+			searchedInHindi = false
 			return
 		}
 
@@ -147,35 +165,62 @@
 		loadedRawCount = 0
 		error = null
 
+		const searchEnglish = async (pagefind: PagefindModule) => {
+			await pagefind.options?.({ language: 'en', ranking: { termSimilarity: 2.5 } })
+			pagefind.init?.()
+			const search = await pagefind.debouncedSearch(term, {}, 300)
+			if (search === null || (search.results?.length ?? 0) === 0) {
+				return null
+			}
+			return { search, effectiveTerm: term }
+		}
+
+		const searchHindi = async (pagefind: PagefindModule) => {
+			// Every query here is searched in Devanagari (see romanToDevanagariForSearch
+			// below), so force the Hindi transcript index.
+			await pagefind.options?.({ language: 'hi', ranking: { termSimilarity: 2.5 } })
+			pagefind.init?.()
+
+			const searchTerms = romanToDevanagariForSearch(term)
+			for (const q of searchTerms) {
+				const search = await pagefind.debouncedSearch(q, {}, 300)
+				if (search !== null && (search.results?.length ?? 0) > 0) {
+					return { search, effectiveTerm: q }
+				}
+			}
+			return null
+		}
+
 		const runSearch = async () => {
 			if (typeof document === 'undefined') return
 			try {
 				const pagefindUrl = new URL('/pagefind/pagefind.js', document.baseURI).href
-				const pagefind = await import(/* @vite-ignore */ pagefindUrl)
-				await pagefind.options?.({ ranking: { termSimilarity: 2.5 } })
-				pagefind.init?.()
+				const pagefind = (await import(/* @vite-ignore */ pagefindUrl)) as PagefindModule
 
-				const searchTerms = romanToDevanagariForSearch(term)
-				let search = null
-				let effectiveTerm = term
+				// Which index(es) to try is driven by the user's content language
+				// selection, matching the Discover tiles' own language scoping.
+				const contentLanguage = mainStore.contentLanguage
+				let outcome: { search: PagefindSearchResult; effectiveTerm: string } | null = null
+				let usedHindi = false
 
-				for (const q of searchTerms) {
-					search = await pagefind.debouncedSearch(q, {}, 300)
-					if (search !== null && (search.results?.length ?? 0) > 0) {
-						effectiveTerm = q
-						break
-					}
+				if (contentLanguage !== 'hindi') {
+					outcome = await searchEnglish(pagefind)
 				}
-				if (search === null) return
+				if (!outcome && contentLanguage !== 'english') {
+					outcome = await searchHindi(pagefind)
+					usedHindi = true
+				}
+				if (!outcome) return
 
-				effectiveSearchTerm = effectiveTerm
-				const raw = (search.results ?? []) as PagefindResult[]
+				searchedInHindi = usedHindi
+				effectiveSearchTerm = outcome.effectiveTerm
+				const raw = (outcome.search.results ?? []) as PagefindResult[]
 				rawResults = raw
 				processedResults = Array(raw.length).fill(undefined)
 				totalCount = raw.length
 
 				const end = Math.min(PAGE_SIZE, raw.length)
-				const loaded = await processRawRange(0, end, effectiveTerm)
+				const loaded = await processRawRange(0, end, outcome.effectiveTerm)
 				loadedRawCount = end
 				results = loaded
 			} catch (e) {
@@ -349,7 +394,7 @@
 		<div class="text-body-sm font-medium text-onSurfaceVariant">
 			{m.libraryTranscriptSearchResultsCount({ count: totalCount })}
 		</div>
-		{#if results.length > 0 && !results[0]?.exactMatch}
+		{#if results.length > 0 && !results[0]?.exactMatch && searchedInHindi}
 			<div
 				class="rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 text-body-sm text-onSurfaceVariant"
 			>

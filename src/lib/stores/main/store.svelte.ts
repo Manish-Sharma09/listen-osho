@@ -45,10 +45,21 @@ const isIndiaBasedUser = (): boolean => {
 	}
 }
 
-export const getDefaultHindiOnly = (): boolean => isIndiaBasedUser()
+export type ContentLanguage = 'hindi' | 'english' | 'both'
 
-export const getPersistedHindiOnly = (): boolean =>
-	getPersistedValue('main', 'hindiOnly', getDefaultHindiOnly())
+export const getDefaultContentLanguage = (): ContentLanguage =>
+	isIndiaBasedUser() ? 'hindi' : 'both'
+
+/** Reads the persisted content language, migrating the legacy `hindiOnly` boolean if present. */
+export const getPersistedContentLanguage = (): ContentLanguage => {
+	const persisted = getPersistedValue<ContentLanguage | null>('main', 'contentLanguage', null)
+	if (persisted) return persisted
+
+	const legacyHindiOnly = getPersistedValue<boolean | null>('main', 'hindiOnly', null)
+	if (legacyHindiOnly !== null) return legacyHindiOnly ? 'hindi' : 'both'
+
+	return getDefaultContentLanguage()
+}
 
 export class MainStore {
 	theme: AppThemeOption = $state('dark')
@@ -99,8 +110,8 @@ export class MainStore {
 
 	librarySplitLayoutEnabled: boolean = $state(true)
 
-	/** When true, only Hindi discourses are shown (English filtered out). */
-	hindiOnly: boolean = $state(getDefaultHindiOnly())
+	/** Which discourse languages are shown in the library. */
+	contentLanguage: ContentLanguage = $state(getPersistedContentLanguage())
 
 	constructor() {
 		persist('main', this, [
@@ -110,7 +121,7 @@ export class MainStore {
 			'customThemePaletteHex',
 			'volumeSliderEnabled',
 			'librarySplitLayoutEnabled',
-			'hindiOnly',
+			'contentLanguage',
 		])
 	}
 }
