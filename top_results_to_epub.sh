@@ -5,8 +5,8 @@ set -eo pipefail
 # CONFIGURATION
 # ============================================================
 
-export LANG="en_US.UTF-8"
-export LC_ALL="en_US.UTF-8"
+export LANG="C.UTF-8"
+export LC_ALL="C.UTF-8"
 
 # When running locally, use the known transcript location.
 # In GitHub Actions, use the checked-out repository.
@@ -73,7 +73,14 @@ log_debug "Found ${TOTAL_LOCAL_FILES} total files."
 # In GitHub Actions, fail instead of blocking on stdin.
 # ============================================================
 
-RAW_WORD="${1:-${QUERY:-}}"
+# Prefer the first argument when supplied. Fall back to QUERY.
+# Do not use xargs here: it can behave unexpectedly with Unicode input
+# under some CI locale configurations.
+if [ "$#" -ge 1 ]; then
+    RAW_WORD="$1"
+else
+    RAW_WORD="${QUERY:-}"
+fi
 
 if [ -z "$RAW_WORD" ]; then
     if [ -t 0 ] && [ -z "${GITHUB_ACTIONS:-}" ]; then
@@ -86,7 +93,11 @@ if [ -z "$RAW_WORD" ]; then
     fi
 fi
 
-SEARCH_WORD=$(echo "$RAW_WORD" | xargs)
+# Trim leading/trailing ASCII whitespace without passing the query
+# through xargs, preserving Unicode characters exactly.
+SEARCH_WORD="$RAW_WORD"
+SEARCH_WORD="${SEARCH_WORD#"${SEARCH_WORD%%[![:space:]]*}"}"
+SEARCH_WORD="${SEARCH_WORD%"${SEARCH_WORD##*[![:space:]]}"}"
 
 if [ -z "$SEARCH_WORD" ]; then
     log_warn "Search word cannot be empty."
