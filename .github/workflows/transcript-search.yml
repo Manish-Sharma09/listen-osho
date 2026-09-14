@@ -30,7 +30,7 @@ jobs:
           sudo apt-get install -y pandoc unzip
 
       - name: Make script executable
-        run: chmod +x ./top_results.sh
+        run: chmod +x ./top_results_to_epub.sh
 
       - name: Generate EPUB
         run: |
