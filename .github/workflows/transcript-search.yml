@@ -34,7 +34,7 @@ jobs:
 
       - name: Generate EPUB
         run: |
-          ./top_results.sh "${{ inputs.query }}" "${{ inputs.output_filename }}"
+          ./top_results_to_epub.sh "${{ inputs.query }}" "${{ inputs.output_filename }}"
 
       - name: Upload EPUB
         uses: actions/upload-artifact@v4
