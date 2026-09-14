@@ -1,0 +1,45 @@
+name: Build Transcript Search EPUB
+
+on:
+  workflow_dispatch:
+    inputs:
+      query:
+        description: "Search word or phrase"
+        required: true
+        type: string
+      output_filename:
+        description: "Optional EPUB filename"
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  search:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Pandoc
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc unzip
+
+      - name: Make script executable
+        run: chmod +x ./top_results.sh
+
+      - name: Generate EPUB
+        run: |
+          ./top_results.sh "${{ inputs.query }}" "${{ inputs.output_filename }}"
+
+      - name: Upload EPUB
+        uses: actions/upload-artifact@v4
+        with:
+          name: transcript-search-${{ inputs.query }}
+          path: "*.epub"
+          if-no-files-found: error
+          retention-days: 14
