@@ -23,7 +23,6 @@
 			title: 'Credits',
 			links: [
 				{ label: 'Audio via Internet Archive', href: 'https://archive.org/details/osho-audio-discourses-collection' },
-				{ label: 'Built on Snae Player', href: 'https://github.com/minht11/local-music-pwa' },
 			],
 		},
 	]

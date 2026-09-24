@@ -13,7 +13,7 @@ export LC_ALL="C.UTF-8"
 if [ -n "${GITHUB_ACTIONS:-}" ]; then
     LOCAL_BASE="${GITHUB_WORKSPACE}/static/rajneesh/transcripts"
 else
-    LOCAL_BASE="/Users/omkar.tenkale/Documents/personal/rajneesh-live.github.io/static/rajneesh/transcripts"
+    LOCAL_BASE="$(cd "$(dirname "$0")" && pwd)/static/rajneesh/transcripts"
 fi
 
 TOP_K=100

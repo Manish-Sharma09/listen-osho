@@ -11,18 +11,8 @@
 	const links: Links[] = [
 		{
 			title: m.aboutSourceCode(),
-			href: 'https://github.com/minht11/local-music-pwa',
+			href: 'https://github.com/Manish-Sharma09/listen-osho',
 			icon: 'github',
-		},
-		{
-			title: m.aboutPrivacy(),
-			href: 'https://github.com/minht11/local-music-pwa#privacy',
-			icon: 'lockCheck',
-		},
-		{
-			title: m.aboutJoinDiscord(),
-			href: 'https://discord.gg/9z3BnHuXZb',
-			icon: 'discord',
 		},
 		{
 			title: m.aboutHomepage(),

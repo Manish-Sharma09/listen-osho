@@ -120,10 +120,10 @@
 	// Safe to call many times — it only writes when something is missing.
 	function enforce() {
 		// 1. Ensure block <style> is in the document.
-		var style = document.getElementById('snae-block');
+		var style = document.getElementById('app-block');
 		if (!style || !style.parentNode) {
 			style = document.createElement('style');
-			style.id = 'snae-block';
+			style.id = 'app-block';
 			style.textContent =
 				'#app{display:none!important}' +
 				'#startup-fallback{display:flex!important;position:fixed!important;' +

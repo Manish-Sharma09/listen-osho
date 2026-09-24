@@ -1,8 +1,8 @@
 # Rajneesh Live — Discourses
 
-A web app for listening to, reading and searching Rajneesh audio discourses in Hindi and English. Built with SvelteKit and Tailwind CSS 4, and deployed on GitHub Pages.
+A web app for listening to, reading and searching Rajneesh audio discourses in Hindi and English. Built with SvelteKit and Tailwind CSS 4.
 
-**Live site:** [rajneesh-live.github.io](https://rajneesh-live.github.io/)
+**Live site:** [listen-osho.vercel.app](https://listen-osho.vercel.app/)
 
 ## Features
 
@@ -53,7 +53,7 @@ Other useful scripts:
 
 ## Project structure
 
-- `src/lib/rajneesh/` — Everything specific to this fork: pages (home, shorts, explore, bookmarks), the 3D turntable and cover flow, transcript lyrics and search, the catalog, downloads and analytics. See [its README](src/lib/rajneesh/README.md) for contribution guidelines.
+- `src/lib/rajneesh/` — Everything specific to this app: pages (home, shorts, explore, bookmarks), the 3D turntable and cover flow, transcript lyrics and search, the catalog, downloads and analytics. See [its README](src/lib/rajneesh/README.md) for contribution guidelines.
 - `static/rajneesh/` — `catalog.json`, discourse transcripts and the Discover tag data
 - `scripts/` — Search index, transcript tag and transcript scraping scripts
 - `DESIGN.md` — The design system the UI follows (Geist type, a single ink tone, hairline borders)
@@ -63,7 +63,3 @@ Other useful scripts:
 Pushing to `main` builds the site and deploys it to GitHub Pages ([deploy.yml](.github/workflows/deploy.yml)).
 
 The **Build Transcript Search EPUB** workflow ([transcript-search.yml](.github/workflows/transcript-search.yml)) can be run by hand from the Actions tab. It searches the transcripts for a word or phrase and packages the top results as an EPUB.
-
-## Acknowledgements
-
-Forked from [Snae Player](https://github.com/minht11/local-music-pwa) by minht11.

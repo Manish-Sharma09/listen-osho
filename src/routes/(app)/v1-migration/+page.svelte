@@ -28,7 +28,7 @@
 </script>
 
 <div class="card m-auto max-w-120 p-4">
-	<div class="mb-4 text-title-lg">Snae Player got an upgrade!</div>
+	<div class="mb-4 text-title-lg">{m.appName()} got an upgrade!</div>
 
 	<div class="text-body-md">
 		<ul>

@@ -164,7 +164,7 @@
 	"settingsThemeAuto": "Auto",
 	"settingsThemeDark": "Dark",
 	"settingsThemeLight": "Light",
-	"settingsTracksInAppStorageTooltip": "This contains tracks stored in app storage and/or data you migrated from Snae Player v1",
+	"settingsTracksInAppStorageTooltip": "This contains tracks stored in app storage and/or data migrated from an earlier version",
 	"settingsTracksInsideAppMemory": "Tracks inside app storage",
 	"settingsUpdatesTitle": "Updates",
 	"settingsUpdatesSubtitle": "Fetch latest app code and content catalog",

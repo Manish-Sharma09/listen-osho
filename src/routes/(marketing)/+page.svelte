@@ -61,7 +61,7 @@
 <Header title={m.appName()} noBackButton mode="fixed-no-spacer">
 	<IconButton
 		as="a"
-		href="https://github.com/minht11/local-music-pwa"
+		href="https://github.com/Manish-Sharma09/listen-osho"
 		target="_blank"
 		kind="flat"
 		tooltip="View source code on GitHub"
@@ -197,20 +197,12 @@
 
 			<div class="flex items-center gap-6 text-body-md">
 				<a
-					href="https://github.com/minht11/local-music-pwa"
+					href="https://github.com/Manish-Sharma09/listen-osho"
 					target="_blank"
 					class="link flex items-center gap-2 text-onSurfaceVariant transition-colors duration-200 hover:text-onSurface"
 				>
 					<Icon type="github" class="h-5 w-5" />
 					{m.aboutSourceCode()}
-				</a>
-
-				<a
-					href="https://github.com/minht11/local-music-pwa#privacy"
-					target="_blank"
-					class="link text-onSurfaceVariant transition-colors duration-200 hover:text-onSurface"
-				>
-					{m.aboutPrivacy()}
 				</a>
 			</div>
 		</div>

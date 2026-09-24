@@ -1,8 +1,8 @@
 /**
- * Rajneesh module - fork-specific functionality
+ * Rajneesh module - app-specific functionality
  *
- * This module contains all Rajneesh-specific code isolated from upstream.
- * Features are controlled via feature flags to maintain upstream compatibility.
+ * This module contains all Rajneesh-specific code, kept isolated from the core player.
+ * Features are controlled via feature flags.
  */
 
 // Feature flags

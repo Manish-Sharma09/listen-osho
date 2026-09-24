@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # --- CONFIGURATION ---
-LOCAL_BASE="/Users/omkar.tenkale/Documents/personal/rajneesh-live.github.io/static/rajneesh/transcripts"
-GITHUB_BASE="https://raw.githubusercontent.com/rajneesh-live/rajneesh-live.github.io/refs/heads/main/static/rajneesh/transcripts"
+LOCAL_BASE="$(cd "$(dirname "$0")" && pwd)/static/rajneesh/transcripts"
+GITHUB_BASE="https://raw.githubusercontent.com/Manish-Sharma09/listen-osho/refs/heads/main/static/rajneesh/transcripts"
 TOP_K=300
 
 # --- TERMINAL COLORS (macOS / BSD Safe) ---

@@ -1,7 +1,6 @@
 /**
  * Feature flags for Rajneesh-specific functionality.
- * These flags allow easy toggling of fork-specific features
- * to maintain compatibility with upstream.
+ * These flags allow easy toggling of app-specific features.
  */
 
 export interface RajneeshFlags {

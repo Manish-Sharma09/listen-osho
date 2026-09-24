@@ -1,8 +1,8 @@
-# GitHub Copilot Instructions for Snae Player
+# GitHub Copilot Instructions for Rajneesh Live
 
 ## Project Overview
 
-**Snae Player** is a privacy-first local music PWA that runs entirely in the browser. Built with **SvelteKit 5**, **TypeScript**, and **Tailwind CSS 4**, it emphasizes performance, type safety, and maintainability.
+**Rajneesh Live** is a PWA for listening to, reading and searching Rajneesh discourses. Built with **SvelteKit 5**, **TypeScript**, and **Tailwind CSS 4**, it emphasizes performance, type safety, and maintainability.
 
 ### Core Features
 
