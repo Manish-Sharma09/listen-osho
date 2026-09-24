@@ -62,7 +62,8 @@ export const getPersistedContentLanguage = (): ContentLanguage => {
 }
 
 export class MainStore {
-	theme: AppThemeOption = $state('dark')
+	// DESIGN.md is light-first: ink on a near-white canvas
+	theme: AppThemeOption = $state('light')
 
 	#deviceThemeDark = new MediaQuery('(prefers-color-scheme: dark)')
 
@@ -82,7 +83,8 @@ export class MainStore {
 		return motion === 'reduced'
 	}
 
-	pickColorFromArtwork: boolean = $state(true)
+	// Off by default so the monochrome DESIGN.md palette stays intact; users can opt in
+	pickColorFromArtwork: boolean = $state(false)
 
 	customThemePaletteHex: string | null = $state(null)
 

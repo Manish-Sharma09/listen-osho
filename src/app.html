@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="dark" data-sveltekit-preload-data="false">
+<html lang="en" data-sveltekit-preload-data="false">
 	<head>
 		<meta charset="utf-8" />
 
@@ -7,9 +7,9 @@
 
 		%snae.theme-color-meta%
 
-		<title>Osho Discourse</title>
+		<title>Listen Osho</title>
 
-		<meta name="description" content="Lightweight on device music player right in your browser." />
+		<meta name="description" content="Listen Osho — explore and listen to thousands of Osho audio discourses, online or offline." />
 
 		<link rel="icon" href="/icons/raster-16.png" sizes="16x16" type="image/png" />
 		<link rel="icon" href="/icons/raster-32.png" sizes="32x32" type="image/png" />
@@ -19,17 +19,331 @@
 
 		<link rel="icon" href="/icons/responsive.svg" type="image/svg+xml" />
 
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
 		<link
-			rel="preload"
-			href="/fonts/Heebo.latin.woff2"
-			as="font"
-			type="font/woff2"
-			crossorigin="anonymous"
-		/>
-		<link
-			href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500&display=swap"
+			href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@500&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap"
 			rel="stylesheet"
 		/>
+
+		<!-- Applies the saved light/dark theme before first paint (must stay synchronous) -->
+		<script src="/boot-theme.js"></script>
+
+		<link rel="preload" href="/brand/logo-192.jpg" as="image" />
+
+		<!--
+			Startup preloader. Plain HTML/CSS so it paints before any JS; the app removes it once
+			mounted (src/lib/rajneesh/boot/preloader.ts). Colours follow DESIGN.md.
+		-->
+		<style>
+			#app-preloader {
+				--pl-canvas: #fafafa;
+				--pl-ink: #171717;
+				--pl-mute: #6f6f6f;
+				--pl-hairline: #ebebeb;
+				--pl-sky: rgb(63 195 251 / 0.45);
+				--pl-saffron: rgb(244 167 107 / 0.38);
+				position: fixed;
+				inset: 0;
+				z-index: 2147483000;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				gap: 28px;
+				background:
+					radial-gradient(45% 40% at 28% 30%, var(--pl-sky), transparent 70%),
+					radial-gradient(40% 40% at 76% 72%, var(--pl-saffron), transparent 70%),
+					var(--pl-canvas);
+				color: var(--pl-ink);
+				font-family: 'Geist', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+				-webkit-font-smoothing: antialiased;
+				transition:
+					opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+					filter 700ms cubic-bezier(0.22, 1, 0.36, 1),
+					transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+			}
+
+			html.dark #app-preloader {
+				--pl-canvas: #0a0a0a;
+				--pl-ink: #ededed;
+				--pl-mute: #8f8f8f;
+				--pl-hairline: #262626;
+				--pl-sky: rgb(63 195 251 / 0.22);
+				--pl-saffron: rgb(226 130 63 / 0.18);
+			}
+
+			/* Exit: the stage lifts toward the viewer and dissolves */
+			#app-preloader.is-leaving {
+				opacity: 0;
+				filter: blur(12px);
+				transform: scale(1.04);
+				pointer-events: none;
+			}
+
+			#app-preloader.is-leaving .pl-record {
+				transform: scale(1.15);
+			}
+
+			.pl-stage {
+				position: relative;
+				width: 196px;
+				height: 196px;
+				perspective: 900px;
+				animation: pl-float 5s ease-in-out infinite;
+			}
+
+			/* Ripples of sound radiating from the record */
+			.pl-ripple {
+				position: absolute;
+				inset: 0;
+				border-radius: 50%;
+				border: 1px solid var(--pl-hairline);
+				animation: pl-ripple 3.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+				opacity: 0;
+			}
+
+			.pl-ripple:nth-child(2) {
+				animation-delay: 1.2s;
+			}
+
+			.pl-ripple:nth-child(3) {
+				animation-delay: 2.4s;
+			}
+
+			/* A perfectly round vinyl facing the viewer; depth comes from the float and shadow */
+			.pl-record {
+				position: absolute;
+				inset: 14px;
+				aspect-ratio: 1;
+				border-radius: 50%;
+				transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+				box-shadow:
+					0 0 0 3px #0a0a0a,
+					0 22px 36px -14px rgb(0 0 0 / 0.4);
+			}
+
+			.pl-disc {
+				position: absolute;
+				inset: 0;
+				border-radius: 50%;
+				background:
+					conic-gradient(
+						from 200deg,
+						transparent 0deg,
+						rgb(255 255 255 / 0.16) 30deg,
+						transparent 70deg,
+						transparent 180deg,
+						rgb(255 255 255 / 0.1) 210deg,
+						transparent 250deg
+					),
+					repeating-radial-gradient(circle, #0c0c0c 0 0.6%, #1b1b1b 0.6% 1.2%);
+				animation: pl-spin 1.8s linear infinite;
+			}
+
+			/*
+			 * The label counter-rotates at the same speed as the disc, so the logo stays upright
+			 * while the grooves and their highlight visibly turn around it.
+			 */
+			.pl-label {
+				position: absolute;
+				inset: 29%;
+				border-radius: 50%;
+				overflow: hidden;
+				background: #3fc3fb url('/brand/logo-192.jpg') center 30% / cover no-repeat;
+				box-shadow:
+					inset 0 0 0 2px rgb(0 0 0 / 0.35),
+					0 0 0 3px rgb(255 255 255 / 0.06);
+				animation: pl-spin 1.8s linear infinite reverse;
+			}
+
+			/* The record's fixed specular highlight: the grooves turn beneath it */
+			.pl-sheen {
+				position: absolute;
+				inset: 0;
+				border-radius: 50%;
+				background: linear-gradient(115deg, transparent 35%, rgb(255 255 255 / 0.12) 50%, transparent 65%);
+				pointer-events: none;
+			}
+
+			.pl-copy {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 14px;
+				animation: pl-rise 900ms cubic-bezier(0.22, 1, 0.36, 1) both 150ms;
+			}
+
+			.pl-wordmark {
+				margin: 0;
+				font-size: 28px;
+				line-height: 32px;
+				font-weight: 600;
+				letter-spacing: -1px;
+			}
+
+			.pl-status {
+				position: relative;
+				height: 16px;
+				width: 300px;
+				font-family: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+				font-size: 12px;
+				line-height: 16px;
+				font-weight: 500;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+				color: var(--pl-mute);
+				text-align: center;
+			}
+
+			/* Three phrases take turns, pure CSS */
+			.pl-status span {
+				position: absolute;
+				inset: 0;
+				opacity: 0;
+				animation: pl-phrase 9s ease-in-out infinite;
+			}
+
+			.pl-status span:nth-child(2) {
+				animation-delay: 3s;
+			}
+
+			.pl-status span:nth-child(3) {
+				animation-delay: 6s;
+			}
+
+			.pl-progress {
+				position: relative;
+				width: 160px;
+				height: 2px;
+				border-radius: 2px;
+				overflow: hidden;
+				background: var(--pl-hairline);
+			}
+
+			.pl-progress::after {
+				content: '';
+				position: absolute;
+				inset: 0;
+				width: 40%;
+				border-radius: 2px;
+				background: linear-gradient(90deg, transparent, #3fc3fb, #f4a76b, transparent);
+				animation: pl-sweep 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+			}
+
+			/* Shown only if startup takes unusually long (e.g. a stalled network) */
+			.pl-slow {
+				margin: 0;
+				font-size: 13px;
+				color: var(--pl-mute);
+				opacity: 0;
+				animation: pl-fade-in 400ms ease 18s forwards;
+			}
+
+			.pl-slow a {
+				color: inherit;
+				text-decoration: underline;
+			}
+
+			@keyframes pl-spin {
+				to {
+					rotate: 360deg;
+				}
+			}
+
+			@keyframes pl-float {
+				0%,
+				100% {
+					translate: 0 0;
+				}
+				50% {
+					translate: 0 -6px;
+				}
+			}
+
+			@keyframes pl-ripple {
+				0% {
+					opacity: 0.9;
+					scale: 0.72;
+				}
+				100% {
+					opacity: 0;
+					scale: 1.55;
+				}
+			}
+
+			@keyframes pl-rise {
+				from {
+					opacity: 0;
+					transform: translateY(10px);
+				}
+			}
+
+			@keyframes pl-phrase {
+				0%,
+				100% {
+					opacity: 0;
+					transform: translateY(4px);
+				}
+				6%,
+				30% {
+					opacity: 1;
+					transform: none;
+				}
+				36% {
+					opacity: 0;
+					transform: translateY(-4px);
+				}
+			}
+
+			@keyframes pl-sweep {
+				from {
+					translate: -100% 0;
+				}
+				to {
+					translate: 250% 0;
+				}
+			}
+
+			@keyframes pl-fade-in {
+				to {
+					opacity: 1;
+				}
+			}
+
+			@media (prefers-reduced-motion: reduce) {
+				.pl-stage,
+				.pl-disc,
+				.pl-label,
+				.pl-ripple,
+				.pl-progress::after,
+				.pl-copy {
+					animation: none;
+				}
+
+				.pl-status span {
+					animation: none;
+				}
+
+				.pl-status span:first-child {
+					opacity: 1;
+				}
+
+				#app-preloader,
+				#app-preloader.is-leaving,
+				#app-preloader.is-leaving .pl-record {
+					filter: none;
+					transform: none;
+				}
+			}
+		</style>
+		<noscript>
+			<style>
+				#app-preloader {
+					display: none !important;
+				}
+			</style>
+		</noscript>
 
 		%sveltekit.head%
 
@@ -37,6 +351,30 @@
 	</head>
 
 	<body>
+		<div id="app-preloader" role="status" aria-live="polite" aria-label="Loading Listen Osho">
+			<div class="pl-stage" aria-hidden="true">
+				<span class="pl-ripple"></span>
+				<span class="pl-ripple"></span>
+				<span class="pl-ripple"></span>
+				<div class="pl-record">
+					<div class="pl-disc">
+						<div class="pl-label"></div>
+					</div>
+					<div class="pl-sheen"></div>
+				</div>
+			</div>
+
+			<div class="pl-copy">
+				<p class="pl-wordmark">Listen Osho</p>
+				<div class="pl-status" aria-hidden="true">
+					<span>Tuning in</span>
+					<span>Placing the needle</span>
+					<span>Finding the silence between words</span>
+				</div>
+				<div class="pl-progress" aria-hidden="true"></div>
+				<p class="pl-slow">Taking longer than usual. <a href="">Reload</a></p>
+			</div>
+		</div>
 		<noscript> Please enable Javascript in order to use this app. </noscript>
 		<div id="startup-fallback"></div>
 		<script src="/supported-browser-check.js"></script>

@@ -47,7 +47,7 @@
 <header
 	class={[
 		'ease-in-out inset-x-0 top-0 z-10 flex h-(--app-header-height) shrink-0 transition-[background-color] duration-200',
-		isScrolled && 'bg-surfaceContainerHigh',
+		isScrolled && 'surface-frost border-b border-(--hairline)',
 		isFixed ? 'fixed' : 'sticky',
 	]}
 >

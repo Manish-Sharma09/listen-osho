@@ -1,9 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import Button from '$lib/components/Button.svelte'
-	import IconButton from '$lib/components/IconButton.svelte'
 	import Icon from '$lib/components/icon/Icon.svelte'
-	import Separator from '$lib/components/Separator.svelte'
 	import { getDatabase } from '$lib/db/database.ts'
 	import { createQuery } from '$lib/db/query/query.ts'
 	import { dbGetAlbumTracksIdsByName, getLibraryItemIdFromUuid } from '$lib/library/get/ids.ts'
@@ -12,6 +10,15 @@
 	import ContinueListeningCard from '$lib/rajneesh/components/ContinueListeningCard.svelte'
 	import InstallAppBanner from '$lib/rajneesh/components/InstallAppBanner.svelte'
 	import HomeBookmarksSection from '$lib/rajneesh/pages/home/HomeBookmarksSection.svelte'
+	import { resolve } from '$app/paths'
+	import { tilt } from '$lib/rajneesh/attachments/tilt.ts'
+	import CoverFlow, { type CoverFlowItem } from '$lib/rajneesh/components/three-d/CoverFlow.svelte'
+	import MarqueeStrip from '$lib/rajneesh/components/ui/MarqueeStrip.svelte'
+	import SectionHeader from '$lib/rajneesh/components/ui/SectionHeader.svelte'
+	import SiteFooter from '$lib/rajneesh/components/ui/SiteFooter.svelte'
+	import { getCatalog } from '$lib/rajneesh/stores/catalog.svelte.ts'
+	import HomeHero from './HomeHero.svelte'
+	import HomeNowSpinning from './HomeNowSpinning.svelte'
 	import { useMainStore } from '$lib/stores/main/use-store.ts'
 
 	const player = usePlayer()
@@ -895,9 +902,76 @@
 		player.playTrack(0, [trackId])
 	}
 
-	const openExploreSearch = () => {
-		void goto('/library/explore?focus=1')
+	const MASTERS = [
+		'Buddha',
+		'Lao Tzu',
+		'Kabir',
+		'Meera',
+		'Krishna',
+		'Mahavira',
+		'Patanjali',
+		'Jesus',
+		'Zarathustra',
+		'Heraclitus',
+		'Rumi',
+		'Nanak',
+		'Gorakh',
+		'Ashtavakra',
+		'Bodhidharma',
+		'Tilopa',
+		'Chuang Tzu',
+		'Socrates',
+	] as const
+
+	const FEATURED_SERIES_COUNT = 15
+
+	// Series with real cover art, spread across the catalog, for the 3D cover flow
+	const featuredSeries = $derived.by((): CoverFlowItem[] => {
+		const catalog = getCatalog()
+		if (!catalog) return []
+
+		const trackCounts = new Map<string, number>()
+		for (const track of catalog.tracks) {
+			trackCounts.set(track.album, (trackCounts.get(track.album) ?? 0) + 1)
+		}
+
+		// Catalog albums carry remote cover URLs (strings) even though the library type allows Blobs
+		const coverOf = (album: (typeof catalog.albums)[number]) => {
+			const image = album.image as unknown
+			return typeof image === 'string' && !image.includes('no_image') ? image : undefined
+		}
+		const withCovers = catalog.albums.filter((album) => coverOf(album))
+		const step = Math.max(1, Math.floor(withCovers.length / FEATURED_SERIES_COUNT))
+
+		return withCovers
+			.filter((_, index) => index % step === 0)
+			.slice(0, FEATURED_SERIES_COUNT)
+			.map((album) => ({
+				id: album.uuid,
+				title: album.name,
+				subtitle: `${trackCounts.get(album.name) ?? 0} discourses`,
+				image: coverOf(album),
+				href: resolve('/(app)/library/[[slug=libraryEntities]]/[uuid]', {
+					slug: 'albums',
+					uuid: album.uuid,
+				}),
+			}))
+	})
+
+	const startListening = () => {
+		const firstCard = resumeCards[0]
+		if (firstCard) {
+			resume(firstCard)
+			return
+		}
+
+		void goto('/library/shorts')
 	}
+
+	const openExplore = () => {
+		void goto('/library/explore')
+	}
+
 
 	const openDiscoverTopic = (topic: string) => {
 		void goto(`/library/explore?search=${encodeURIComponent(topic)}`)
@@ -1007,116 +1081,157 @@
 </script>
 
 {#snippet discoverSection()}
-	<section class="py-4">
-		<div class="mb-4 flex items-end justify-between gap-3">
-			<div class="space-y-1">
-				<h2 class="text-title-lg">Discover</h2>
-				<p class="text-body-sm text-onSurface/70">
-					Popular themes picked from the transcript library.
-				</p>
-			</div>
-		</div>
+	<section class="py-14" aria-labelledby="home-discover-title">
+		<SectionHeader
+			id="home-discover-title"
+			eyebrow="Themes from the transcripts"
+			title="Discover"
+			description="Topics counted across every transcript. Pick one to search inside the talks."
+		>
+			{#snippet action()}
+				<Button kind="outlined" class="shuffle-button" onclick={shuffleDiscoverTopics}>
+					<Icon type="shuffle" class="size-4" />
+					Shuffle
+				</Button>
+			{/snippet}
+		</SectionHeader>
 
-		<div class="flex flex-wrap gap-2">
-			{#each visibleDiscoverTopics as topic (topic.tag)}
-				<Button
-					kind="outlined"
-					class="h-auto min-w-28 rounded-3xl px-4 py-3 text-left"
+		<div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+			{#each visibleDiscoverTopics as topic, index (topic.tag)}
+				<button
+					{@attach tilt({ max: 8 })}
+					type="button"
+					class="topic-card surface-card interactable animate-rise flex-col items-start justify-between gap-4 rounded-xl p-4 text-left transition-[border-color] duration-200 hover:border-(--hairline-strong) sm:gap-8 sm:p-5"
+					style="animation-delay: {index * 40}ms"
 					onclick={() => openDiscoverTopic(topic.tag)}
 				>
-					<span class="flex flex-col items-start gap-1 leading-tight">
-						<span class="text-body-sm font-medium">{topic.tag}</span>
-						<span class="text-label-sm text-onSurface/60">
+					<span class="font-mono text-label-md text-onSurfaceVariant tabular-nums">
+						{String(index + 1).padStart(2, '0')}
+					</span>
+					<span class="flex min-w-0 flex-col gap-1">
+						<span class="truncate text-title-lg">{topic.tag}</span>
+						<span class="text-eyebrow text-onSurfaceVariant">
 							{getDiscoverTopicCountLabel(topic.documents)}
 						</span>
 					</span>
-				</Button>
+				</button>
 			{/each}
-			<Button
-				kind="outlined"
-				class="h-auto rounded-3xl px-4 py-3 text-body-sm"
-				onclick={shuffleDiscoverTopics}
-			>
-				Show more
-			</Button>
 		</div>
 	</section>
 {/snippet}
 
-{#snippet searchBar()}
-	<div
-		class="@container sticky top-2 z-1 mt-2 mb-4 flex w-full items-center gap-1 rounded-lg border border-primary/10 bg-surfaceContainerHighest px-2 @sm:gap-2"
-	>
-		<input
-			type="text"
-			name="search"
-			placeholder={m.librarySearch()}
-			class="h-12 min-w-0 flex-1 bg-transparent pl-2 text-body-md placeholder:text-onSurface/54 focus:outline-none"
-			onfocus={openExploreSearch}
-			onclick={openExploreSearch}
-		/>
+<div class="flex grow flex-col pb-4">
+	<HomeHero
+		primaryLabel={resumeCards.length > 0 ? 'Continue listening' : 'Start listening'}
+		onPrimary={startListening}
+		onExplore={openExplore}
+	/>
 
-		<Separator vertical class="my-auto hidden h-6 @sm:flex" />
+	<MarqueeStrip
+		label="Masters and mystics Osho speaks on"
+		items={MASTERS}
+		href={(name) => `/library/explore?search=${encodeURIComponent(name)}`}
+		class="border-b border-(--hairline)"
+	/>
 
-		<IconButton
-			ariaLabel={m.settings()}
-			tooltip={m.settings()}
-			icon="settings"
-			onclick={() => {
-				void goto('/settings')
-			}}
-		/>
+	<InstallAppBanner class="mt-8" />
+
+	<HomeNowSpinning onStart={startListening} />
+
+	{#if resumeCards.length > 0}
+		<section class="border-t border-(--hairline) py-14" aria-labelledby="home-resume-title">
+			<SectionHeader
+				id="home-resume-title"
+				eyebrow="Pick up where you left off"
+				title="Continue listening"
+			>
+				{#snippet action()}
+					{#if hasHiddenResumeCards}
+						<Button kind="outlined" class="shrink-0" onclick={() => (resumeExpanded = !resumeExpanded)}>
+							{resumeExpanded ? 'Show less' : 'Show all'}
+						</Button>
+					{/if}
+				{/snippet}
+			</SectionHeader>
+
+			<div class="grid w-full gap-4 sm:grid-cols-2 xl:grid-cols-3">
+				{#each visibleResumeCards as card, index (card.trackId)}
+					<ContinueListeningCard
+						{card}
+						featured={index === 0}
+						onResume={() => resume(card)}
+					/>
+				{/each}
+			</div>
+		</section>
+	{/if}
+
+	{#if featuredSeries.length > 0}
+		<section class="border-t border-(--hairline) py-14" aria-labelledby="home-featured-title">
+			<SectionHeader
+				id="home-featured-title"
+				eyebrow="Featured series"
+				title="Browse the shelf"
+				description="Drag, swipe or use the arrow keys. Select the centre cover to open the series."
+			>
+				{#snippet action()}
+					<Button kind="outlined" as="a" href="/library/explore">View all</Button>
+				{/snippet}
+			</SectionHeader>
+
+			<CoverFlow items={featuredSeries} label="Featured series" />
+		</section>
+	{/if}
+
+	<div class="border-t border-(--hairline)">
+		{@render discoverSection()}
 	</div>
-{/snippet}
 
-{#snippet devNote()}
+	<HomeBookmarksSection />
+
+	<!-- DESIGN.md cta-band -->
+	<section
+		class="relative isolate mt-6 overflow-hidden rounded-2xl border border-(--hairline) bg-surfaceContainerLowest px-6 py-16 text-center sm:py-24"
+		aria-labelledby="home-cta-title"
+	>
+		<div class="bg-mesh absolute inset-0 -z-1 opacity-60" aria-hidden="true"></div>
+		<div class="mb-4 text-eyebrow text-onSurfaceVariant">Listen anywhere</div>
+		<h2 id="home-cta-title" class="mx-auto max-w-2xl text-headline-lg text-balance sm:text-display-xl">
+			Take the silence with you.
+		</h2>
+		<p class="mx-auto mt-4 max-w-lg text-body-lg text-onSurfaceVariant">
+			Download any discourse for offline listening, or let Shorts surprise you with a moment.
+		</p>
+		<div class="mt-8 flex flex-wrap items-center justify-center gap-3">
+			<Button as="a" href="/library/shorts" class="h-11 px-5">
+				<Icon type="musicNote" class="size-5" />
+				Try Shorts
+			</Button>
+			<Button kind="outlined" as="a" href="/library/explore" class="h-11 px-5">
+				Explore library
+			</Button>
+		</div>
+	</section>
+
 	<button
 		onclick={() => void goto('/settings')}
-		class="mb-4 flex w-full items-center gap-3 rounded-xl border border-outlineVariant/50 px-4 py-3 text-left transition-colors hover:bg-surfaceContainerHigh"
+		class="interactable mt-6 w-full gap-3 rounded-lg border border-dashed border-(--hairline-strong) px-4 py-3 text-left"
 	>
-		<Icon type="information" class="size-5 shrink-0 opacity-70" />
-		<span class="flex-1 text-body-sm opacity-80">
+		<Icon type="information" class="size-5 shrink-0 text-tertiary" />
+		<span class="flex-1 text-body-sm text-onSurfaceVariant">
 			App is in early development. Help us improve!
 		</span>
 		<Icon type="chevronRight" class="size-5 shrink-0 opacity-50" />
 	</button>
-{/snippet}
 
-{#if resumeCards.length > 0}
-	<div class="flex grow flex-col pb-4">
-		{@render searchBar()}
-		<InstallAppBanner class="mb-4" />
-		{@render devNote()}
+	<SiteFooter />
+</div>
 
-		{@render discoverSection()}
-		<HomeBookmarksSection />
-
-		<section class="relative py-4">
-			<div class="mb-4 flex items-center justify-between gap-3">
-				<h2 class="text-title-lg">Continue listening</h2>
-				{#if hasHiddenResumeCards}
-					<Button kind="outlined" class="shrink-0" onclick={() => (resumeExpanded = !resumeExpanded)}>
-						{resumeExpanded ? 'Show less' : 'Show all'}
-					</Button>
-				{/if}
-			</div>
-
-			<div class="grid w-full gap-4 overflow-clip sm:grid-cols-2 lg:grid-cols-3">
-			{#each visibleResumeCards as card (card.trackId)}
-				<ContinueListeningCard card={card} onResume={() => resume(card)} />
-			{/each}
-			</div>
-		</section>
-	</div>
-{:else}
-	<div class="flex grow flex-col pb-4">
-		{@render searchBar()}
-		<InstallAppBanner class="mb-4" />
-		{@render devNote()}
-
-		{@render discoverSection()}
-		<HomeBookmarksSection />
-
-		<div class="flex h-full flex-col items-center justify-center text-center"></div>
-	</div>
-{/if}
+<style>
+	@media (any-hover: hover) and (prefers-reduced-motion: no-preference) {
+		:global(.shuffle-button:hover svg) {
+			transform: rotate(180deg);
+			transition: transform 500ms var(--ease-calm);
+		}
+	}
+</style>

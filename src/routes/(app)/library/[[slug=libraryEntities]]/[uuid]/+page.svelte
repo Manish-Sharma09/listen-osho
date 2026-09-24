@@ -1,6 +1,6 @@
 <script lang="ts">
+	import RecordSleeve from '$lib/rajneesh/components/three-d/RecordSleeve.svelte'
 	import { MediaQuery } from 'svelte/reactivity'
-	import Artwork from '$lib/components/Artwork.svelte'
 	import Button from '$lib/components/Button.svelte'
 	import Header from '$lib/components/Header.svelte'
 	import IconButton from '$lib/components/IconButton.svelte'
@@ -30,18 +30,9 @@
 	const item = $derived(itemQuery.value)
 	const tracks = $derived(tracksQuery.value)
 	const slug = $derived(data.slug)
-
-	const getFallbackArtwork = () => {
-		if (slug === 'playlists') {
-			return 'playlist'
-		}
-
-		if (slug === 'albums') {
-			return 'album'
-		}
-
-		return 'person'
-	}
+	const isThisSeriesActive = $derived(
+		slug === 'albums' && !!player.activeTrack && player.activeTrack.album === item.name,
+	)
 
 	const artworkSrc = createManagedArtwork(() => {
 		if (slug !== 'playlists') {
@@ -118,30 +109,39 @@
 	<Header title={data.singularTitle()} mode="fixed" />
 {/if}
 
-<div class="@container flex grow flex-col px-4 pb-4">
+<div class="@container flex grow flex-col px-4 pb-4 sm:px-6">
 	<section
-		class="relative flex w-full flex-col items-center justify-center gap-6 overflow-clip py-4 @2xl:min-h-60 @2xl:flex-row"
+		class="record-host relative isolate mt-4 mb-8 flex w-full flex-col items-center gap-8 overflow-hidden rounded-2xl border border-(--hairline) bg-surfaceContainerLowest p-6 @lg:p-10 @2xl:min-h-80 @2xl:flex-row @2xl:items-end"
 	>
+		<!-- DESIGN.md mesh, the page's only colour -->
+		<div class="bg-mesh pointer-events-none absolute inset-0 -z-1 opacity-70" aria-hidden="true"></div>
+
 		{#if slug !== 'playlists'}
-			<Artwork
-				src={artworkSrc()}
-				fallbackIcon={getFallbackArtwork()}
-				class="h-49 shrink-0 rounded-2xl @2xl:h-full"
-			/>
+			<!-- The series as a record sleeve: the vinyl slides out on hover and spins while this series plays -->
+			<div class="w-52 shrink-0 animate-rise pr-18 @2xl:w-64 @2xl:pr-22">
+				<RecordSleeve
+					src={artworkSrc()}
+					alt={formatNameOrUnknown(item.name)}
+					out={isThisSeriesActive}
+					spinning={isThisSeriesActive && player.playing}
+					peek={0.42}
+				/>
+			</div>
 		{/if}
 
-		<div
-			class="relative z-0 flex h-full w-full flex-col overflow-clip rounded-2xl bg-surfaceContainerHigh"
-		>
-			<div class="flex grow flex-col p-4">
-				<div class="flex items-center gap-2">
-					<Icon type="playlist" class="size-10 text-onSurface/54" />
+		<div class="flex w-full min-w-0 animate-rise flex-col gap-4 [animation-delay:80ms]">
+			<div class="flex flex-col gap-2 @max-2xl:items-center @max-2xl:text-center">
+				<span class="flex items-center gap-2 text-eyebrow text-onSurfaceVariant">
+					<Icon type="playlist" class="size-4" />
+					{data.singularTitle()}
+				</span>
 
-					<h1 class="text-headline-md">{formatNameOrUnknown(item.name)}</h1>
-				</div>
+				<h1 class="text-headline-lg text-balance @2xl:text-display-xl">
+					{formatNameOrUnknown(item.name)}
+				</h1>
 
 				{#if description}
-					<div class="text-body-lg">{description}</div>
+					<p class="text-body-lg text-onSurfaceVariant">{description}</p>
 				{/if}
 
 				{#if artists}
@@ -152,7 +152,7 @@
 					</div>
 				{/if}
 
-				<div class="mt-1 text-onSurfaceVariant">
+				<div class="text-eyebrow text-onSurfaceVariant">
 					{#if slug === 'albums' && (item as AlbumData).year !== UNKNOWN_ITEM}
 						{(item as AlbumData).year} •
 					{/if}
@@ -161,22 +161,23 @@
 				</div>
 			</div>
 
-			<div class="mt-auto flex items-center gap-2 py-4 pr-2 pl-4">
+			<div class="flex items-center gap-2 @max-2xl:justify-center">
 				<Button
 					kind="filled"
-					class="my-1"
+					class="h-11 px-6"
 					disabled={tracks.tracksIds.length === 0}
 					onclick={() => {
 						player.playTrack(0, tracks.tracksIds)
 					}}
 				>
+					<Icon type="play" class="size-5" />
 					{m.play()}
 				</Button>
 
 				{#if !isRajneeshEnabled()}
 					<Button
-						kind="flat"
-						class="my-1 mr-auto"
+						kind="outlined"
+						class="h-11"
 						disabled={tracks.tracksIds.length === 0}
 						onclick={() => {
 							player.playTrack(0, tracks.tracksIds, {
@@ -187,14 +188,13 @@
 						{m.shuffle()}
 						<Icon type="shuffle" />
 					</Button>
-				{:else}
-					<span class="mr-auto"></span>
 				{/if}
 
 				{#if menuItems && slug !== 'albums'}
 					<IconButton
 						icon="moreVertical"
 						tooltip={m.more()}
+						class="ml-auto size-10 rounded-md! border border-(--hairline) bg-surfaceContainerLowest"
 						onclick={(e) => {
 							menu.showFromEvent(e, menuItems, {
 								anchor: true,
@@ -210,6 +210,8 @@
 		</div>
 	</section>
 
+	<!-- Plain translucent panel: a backdrop blur over a very tall virtual list would be costly -->
+	<div class="rounded-xl border border-(--hairline) bg-surfaceContainerLowest p-1.5">
 	<TracksListContainer
 		items={tracks.tracksIds}
 		predefinedMenuItems={{
@@ -218,4 +220,5 @@
 		}}
 		menuItems={slug === 'playlists' ? playlistTrackMenuItems : undefined}
 	/>
+	</div>
 </div>

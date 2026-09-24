@@ -3,6 +3,7 @@
 	import CommonDialog from '$lib/components/dialog/CommonDialog.svelte'
 	import IconButton from '$lib/components/IconButton.svelte'
 	import { highlightExcerpt } from '$lib/rajneesh/transcript/excerpt.ts'
+	import { loadTrackTranscript } from '$lib/rajneesh/transcript/load-transcript.ts'
 
 	const player = usePlayer()
 
@@ -13,43 +14,6 @@
 	let error = $state<string | null>(null)
 	let transcriptHtml = $state('')
 	let transcriptContentEl: HTMLDivElement | null = $state(null)
-
-	const buildTranscriptCandidates = (trackUuid: string, trackNo: number, trackOf: number): string[] => {
-		const lastDash = trackUuid.lastIndexOf('-')
-		if (lastDash === -1) {
-			return []
-		}
-
-		const prefix = trackUuid.slice(0, lastDash)
-		const num = String(trackNo)
-		const count = String(trackOf)
-
-		const discourseWidths = Array.from(
-			new Set([num.length, count.length, 2, 3].filter((width) => width >= num.length)),
-		).sort((a, b) => a - b)
-		const rangeWidths = Array.from(new Set([count.length, 2, 3])).sort((a, b) => a - b)
-
-		const discourseSlugs = Array.from(
-			new Set([
-				`${prefix}-${num}`,
-				...discourseWidths.map((width) => `${prefix}-${num.padStart(width, '0')}`),
-			]),
-		)
-
-		const seriesSlugs = Array.from(
-			new Set(
-				rangeWidths.flatMap((width) => [
-					`${prefix}-by-osho-1-${count.padStart(width, '0')}`,
-					`${prefix}-by-osho-${String(1).padStart(width, '0')}-${count.padStart(width, '0')}`,
-					`${prefix}-by-osho-${String(1).padStart(width, '0')}-${count}`,
-				]),
-			),
-		)
-
-		return seriesSlugs.flatMap((seriesSlug) =>
-			discourseSlugs.map((discourseSlug) => `/rajneesh/transcripts/${seriesSlug}/${discourseSlug}.txt`),
-		)
-	}
 
 	const openTranscript = async () => {
 		if (!track) {
@@ -62,19 +26,7 @@
 		transcriptHtml = ''
 
 		try {
-			const candidates = buildTranscriptCandidates(track.uuid, track.trackNo, track.trackOf)
-			let transcriptText: string | null = null
-
-			for (const candidate of candidates) {
-				const response = await fetch(candidate)
-				if (!response.ok) {
-					continue
-				}
-
-				const buffer = await response.arrayBuffer()
-				transcriptText = new TextDecoder('utf-8').decode(buffer)
-				break
-			}
+			const transcriptText = await loadTrackTranscript(track)
 
 			if (!transcriptText) {
 				throw new Error('Transcript unavailable for this discourse.')

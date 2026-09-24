@@ -1,6 +1,6 @@
 <script lang="ts">
+	import EmptyState from '$lib/rajneesh/components/ui/EmptyState.svelte'
 	import { page } from '$app/state'
-	import Icon from '$lib/components/icon/Icon.svelte'
 	import {
 		deleteBookmark,
 		getResolvedBookmarks,
@@ -71,19 +71,19 @@
 </script>
 
 {#if loading}
-	<div class="flex grow items-center justify-center py-12 text-body-sm text-onSurfaceVariant">
-		Loading bookmarks...
+	<div class="flex flex-col gap-3 pb-4" role="status" aria-label="Loading bookmarks...">
+		{#each { length: 4 }, index (index)}
+			<div class="skeleton h-16 rounded-2xl"></div>
+		{/each}
 	</div>
 {:else if visibleBookmarks.length === 0}
-	<div class="flex grow flex-col items-center justify-center gap-3 py-12 text-center">
-		<Icon type="bookmark" class="size-12 opacity-50" />
-		<div class="text-title-md">No bookmarks yet</div>
-		<div class="max-w-80 text-body-sm text-onSurfaceVariant">
-			Save a bookmark from the player to keep important moments here.
-		</div>
-	</div>
+	<EmptyState
+		icon="bookmark"
+		title="No bookmarks yet"
+		description="Save a bookmark from the player to keep important moments here."
+	/>
 {:else}
-	<div class="flex flex-col gap-3 pb-4">
+	<div class="grid gap-3 pb-4 lg:grid-cols-2">
 		{#each visibleBookmarks as bookmark (bookmark.id)}
 			<BookmarkCard
 				{bookmark}

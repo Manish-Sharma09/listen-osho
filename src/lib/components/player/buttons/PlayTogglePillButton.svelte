@@ -4,13 +4,15 @@
 	import Icon from '$lib/components/icon/Icon.svelte'
 	import Button from '../../Button.svelte'
 
+	const { class: className }: { class?: ClassValue } = $props()
+
 	const player = usePlayer()
 	const hasPlaybackError = $derived(!!player.playbackError)
 </script>
 
 <Button
 	tooltip={hasPlaybackError ? m.reload() : player.playing ? m.playerPause() : m.playerPlay()}
-	class="w-18 !p-0"
+	class={['w-18 !p-0', className]}
 	disabled={!player.activeTrack}
 	onclick={() => (hasPlaybackError ? player.retryPlayback() : player.togglePlay())}
 >

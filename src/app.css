@@ -69,7 +69,8 @@
 		/* CJK Unified Ideographs */ U+F900-FAFF, /* CJK Compatibility Ideographs */ U+FF00-FFEF; /* Half/Fullwidth */
 }
 
-@theme {
+/* static: always emit these variables so component <style> blocks can rely on them */
+@theme static {
 	--breakpoint-xs: 24rem;
 	--breakpoint-xss: 20rem;
 
@@ -78,9 +79,99 @@
 	--ease-outgoing40: cubic-bezier(0.4, 0, 1, 1);
 	--ease-incoming80: cubic-bezier(0, 0, 0.2, 1);
 	--ease-incoming80outgoing40: cubic-bezier(0.4, 0, 0.2, 1);
+	--ease-calm: cubic-bezier(0.22, 1, 0.36, 1);
 
-	--font-sans: 'Heebo', 'App CJK Fallback', system-ui, 'Noto Color Emoji', sans-serif;
+	/* Geist per DESIGN.md; Devanagari and CJK fall through to dedicated faces */
+	--font-sans:
+		'Geist', 'Noto Sans Devanagari', 'Heebo', 'App CJK Fallback', system-ui, 'Noto Color Emoji',
+		sans-serif;
+	--font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 	--text-*: initial;
+
+	/* DESIGN.md ink ladder (Geist). Material tokens are pinned to these in vite.config.ts */
+	--color-ink: #171717;
+	--color-body: #4d4d4d;
+	--color-mute: #8f8f8f;
+	--color-faint: #a1a1a1;
+	--color-canvas: #fafafa;
+	--color-elevated: #ffffff;
+
+	/* Listen Osho accents sampled from the logo; used only in the mesh gradient and focus/active signals */
+	--color-sky: #3fc3fb;
+	--color-sky-soft: #8fdcfd;
+	--color-sky-deep: #0a7ab0;
+	--color-saffron: #f4a76b;
+	--color-saffron-deep: #e2823f;
+	--color-ember: #e8323c;
+	--color-pearl: #f6f9fc;
+
+	/* DESIGN.md elevation: 0 flat hairline, 1 whisper, 2 floating layered stack */
+	--shadow-whisper: 0 1px 1px rgb(0 0 0 / 0.04);
+	--shadow-float: 0 2px 2px rgb(0 0 0 / 0.04), 0 8px 16px -4px rgb(0 0 0 / 0.08);
+	--shadow-lift:
+		0 2px 2px rgb(0 0 0 / 0.04), 0 8px 16px -4px rgb(0 0 0 / 0.08),
+		0 24px 48px -12px rgb(0 0 0 / 0.18);
+
+	--animate-breathe: breathe 6s ease-in-out infinite;
+	--animate-rise: rise 700ms var(--ease-calm) both;
+	--animate-shimmer: shimmer 1.6s linear infinite;
+	--animate-spin-record: record-spin 1.8s linear infinite;
+	--animate-marquee: marquee 40s linear infinite;
+	--animate-mesh: mesh 24s ease-in-out infinite alternate;
+}
+
+@keyframes breathe {
+	0%,
+	100% {
+		transform: scale(1);
+		opacity: 0.55;
+	}
+	50% {
+		transform: scale(1.06);
+		opacity: 0.9;
+	}
+}
+
+@keyframes rise {
+	from {
+		opacity: 0;
+		transform: translateY(16px);
+	}
+}
+
+@keyframes shimmer {
+	to {
+		background-position: -200% 0;
+	}
+}
+
+@keyframes record-spin {
+	to {
+		rotate: 360deg;
+	}
+}
+
+@keyframes marquee {
+	to {
+		translate: -50% 0;
+	}
+}
+
+@keyframes mesh {
+	0% {
+		background-position:
+			0% 0%,
+			100% 0%,
+			100% 100%,
+			0% 100%;
+	}
+	100% {
+		background-position:
+			30% 20%,
+			70% 30%,
+			60% 80%,
+			20% 70%;
+	}
 }
 
 html {
@@ -99,7 +190,18 @@ html {
 	scroll-padding-top: var(--app-header-height);
 	scroll-padding-bottom: var(--bottom-overlay-height);
 	--app-header-height: --spacing(16);
-	--app-max-content-width: --spacing(400);
+	/* DESIGN.md: centered ~1200px container */
+	--app-max-content-width: --spacing(300);
+
+	/* Hairline (DESIGN.md #ebebeb) and translucent chrome. light-dark() follows html color-scheme */
+	--hairline: light-dark(#ebebeb, #262626);
+	--hairline-strong: light-dark(#dcdcdc, #333333);
+	--frost-bg: light-dark(rgb(250 250 250 / 0.78), rgb(10 10 10 / 0.72));
+	--glass-bg: var(--frost-bg);
+	--mesh-a: light-dark(rgb(63 195 251 / 0.55), rgb(63 195 251 / 0.35));
+	--mesh-b: light-dark(rgb(143 220 253 / 0.6), rgb(10 122 176 / 0.4));
+	--mesh-c: light-dark(rgb(244 167 107 / 0.5), rgb(226 130 63 / 0.28));
+	--mesh-d: light-dark(rgb(232 50 60 / 0.16), rgb(232 50 60 / 0.14));
 }
 
 html.dark {
@@ -115,9 +217,14 @@ body {
 	-webkit-tap-highlight-color: transparent;
 	display: flex;
 	flex-direction: column;
+	/* clip (not hidden) so sticky headers keep working while wide 3D scenes never cause sideways scroll */
+	overflow-x: clip;
 	/* Needed for Safari */
 	-webkit-user-select: none;
 	user-select: none;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeLegibility;
 	@apply text-body-md;
 }
 
@@ -160,8 +267,12 @@ source {
 	}
 
 	:where(:focus-visible) {
-		outline: --spacing(0.5) solid var(--color-onSurface);
+		outline: --spacing(0.5) solid var(--color-tertiary);
 		outline-offset: --spacing(0.5);
+	}
+
+	::selection {
+		background-color: color-mix(in oklab, var(--color-sky) 40%, transparent);
 	}
 
 	strong {
@@ -249,88 +360,181 @@ source {
 	transform: scaleY(-1);
 }
 
+/*
+ * Type scale follows DESIGN.md: weight is binary (600 headings, 500 labels, 400 body)
+ * and display sizes carry tight negative tracking.
+ */
+@utility text-display-hero {
+	font-size: clamp(3.5rem, 15vw, 11rem);
+	line-height: 0.86;
+	letter-spacing: -0.06em;
+	font-weight: 800;
+}
+
+@utility text-display-xl {
+	font-size: --spacing(12);
+	line-height: --spacing(12);
+	letter-spacing: -2.4px;
+	font-weight: 600;
+}
+
 @utility text-headline-lg {
 	font-size: --spacing(8);
 	line-height: --spacing(10);
-	letter-spacing: 0;
-	font-weight: 700;
+	letter-spacing: -1.28px;
+	font-weight: 600;
 }
 
 @utility text-headline-md {
 	font-size: --spacing(7);
 	line-height: --spacing(9);
-	letter-spacing: 0;
-	font-weight: 400;
+	letter-spacing: -0.9px;
+	font-weight: 600;
 }
 
 @utility text-headline-sm {
 	font-size: --spacing(6);
 	line-height: --spacing(8);
-	letter-spacing: 0;
-	font-weight: 400;
+	letter-spacing: -0.6px;
+	font-weight: 600;
 }
 
 @utility text-title-lg {
-	font-size: --spacing(5.5);
+	font-size: --spacing(5);
 	line-height: --spacing(7);
-	letter-spacing: 0;
-	font-weight: 500;
+	letter-spacing: -0.4px;
+	font-weight: 600;
 }
 
 @utility text-title-md {
 	font-size: --spacing(4);
 	line-height: --spacing(6);
-	letter-spacing: 0.15px;
+	letter-spacing: -0.16px;
 	font-weight: 500;
 }
 
 @utility text-title-sm {
 	font-size: --spacing(3.5);
 	line-height: --spacing(5);
-	letter-spacing: 0.1px;
+	letter-spacing: -0.28px;
 	font-weight: 500;
 }
 
 @utility text-label-lg {
 	font-size: --spacing(3.5);
 	line-height: --spacing(5);
-	letter-spacing: 0.1px;
+	letter-spacing: 0;
 	font-weight: 500;
 }
 
 @utility text-label-md {
 	font-size: 12px;
 	line-height: --spacing(4);
-	letter-spacing: 0.5px;
+	letter-spacing: 0.1px;
 	font-weight: 500;
 }
 
 @utility text-label-sm {
 	font-size: 11px;
 	line-height: --spacing(4);
-	letter-spacing: 0.5px;
+	letter-spacing: 0.2px;
 	font-weight: 500;
 }
 
 @utility text-body-lg {
 	font-size: --spacing(4);
 	line-height: --spacing(6);
-	letter-spacing: 0.15px;
+	letter-spacing: 0;
 	font-weight: 400;
 }
 
 @utility text-body-md {
 	font-size: --spacing(3.5);
 	line-height: --spacing(5);
-	letter-spacing: 0.25px;
+	letter-spacing: 0;
 	font-weight: 400;
 }
 
 @utility text-body-sm {
 	font-size: --spacing(3);
 	line-height: --spacing(4);
-	letter-spacing: 0.4px;
+	letter-spacing: 0;
 	font-weight: 400;
+}
+
+/* Uppercase Geist Mono section eyebrow (DESIGN.md mono-eyebrow) */
+@utility text-eyebrow {
+	font-family: var(--font-mono);
+	font-size: 12px;
+	line-height: --spacing(4);
+	letter-spacing: 0.08em;
+	font-weight: 500;
+	text-transform: uppercase;
+}
+
+/* DESIGN.md level 0/1: white (or dark elevated) card, 1px hairline, whisper shadow */
+@utility surface-card {
+	background-color: var(--color-surfaceContainerLowest);
+	border: 1px solid var(--hairline);
+	box-shadow: var(--shadow-whisper);
+}
+
+/* DESIGN.md level 2: floating surface for menus, dialogs, the player, featured tiles */
+@utility surface-float {
+	background-color: var(--color-surfaceContainerLowest);
+	border: 1px solid var(--hairline);
+	box-shadow:
+		inset 0 0 0 1px light-dark(rgb(255 255 255 / 0.6), rgb(255 255 255 / 0.02)),
+		var(--shadow-lift);
+}
+
+/* Translucent chrome (nav bars, mini player) that lets content scroll underneath */
+@utility surface-frost {
+	background-color: var(--frost-bg);
+	-webkit-backdrop-filter: blur(16px) saturate(180%);
+	backdrop-filter: blur(16px) saturate(180%);
+}
+
+@utility hairline {
+	border: 1px solid var(--hairline);
+}
+
+/* The single decorative system from DESIGN.md: a soft multi-stop mesh, tinted with logo colours */
+@utility bg-mesh {
+	background-color: transparent;
+	background-image:
+		radial-gradient(40% 50% at 20% 30%, var(--mesh-a), transparent 70%),
+		radial-gradient(35% 45% at 80% 20%, var(--mesh-b), transparent 70%),
+		radial-gradient(40% 50% at 70% 80%, var(--mesh-c), transparent 70%),
+		radial-gradient(30% 40% at 25% 85%, var(--mesh-d), transparent 70%);
+	background-size: 140% 140%;
+	background-repeat: no-repeat;
+	animation: var(--animate-mesh);
+
+	@media (prefers-reduced-motion: reduce) {
+		animation: none;
+	}
+}
+
+@utility skeleton {
+	background: linear-gradient(
+		90deg,
+		color-mix(in oklab, var(--color-onSurface) 7%, transparent) 25%,
+		color-mix(in oklab, var(--color-onSurface) 14%, transparent) 50%,
+		color-mix(in oklab, var(--color-onSurface) 7%, transparent) 75%
+	);
+	background-size: 200% 100%;
+	animation: var(--animate-shimmer);
+
+	@media (prefers-reduced-motion: reduce) {
+		animation: none;
+	}
+}
+
+/* Hollow letters: stroke keeps currentColor, only the fill is removed */
+@utility text-outline {
+	-webkit-text-fill-color: transparent;
+	-webkit-text-stroke: 1.5px currentColor;
 }
 
 @utility view-name-* {
@@ -358,11 +562,14 @@ source {
 		text-decoration: underline;
 	}
 
+	/* Settings-style panels: DESIGN.md hairline card */
 	.card {
-		background-color: var(--color-surfaceContainer);
+		background-color: var(--color-surfaceContainerLowest);
+		border: 1px solid var(--hairline);
+		box-shadow: var(--shadow-whisper);
 		display: flex;
 		flex-direction: column;
-		border-radius: --spacing(2);
+		border-radius: --spacing(3);
 		color: var(--color-onSurface);
 	}
 

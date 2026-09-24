@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation'
 	import { page } from '$app/state'
 	import IconButton from '$lib/components/IconButton.svelte'
+	import Icon from '$lib/components/icon/Icon.svelte'
 	import Separator from '$lib/components/Separator.svelte'
 	import { debounce } from '$lib/helpers/utils/debounce.ts'
 	import type { PageData } from './$types.ts'
@@ -62,15 +63,18 @@
 </script>
 
 <div
-	class="@container sticky top-2 z-1 mt-2 mb-4 flex w-full items-center gap-1 rounded-lg border border-primary/10 bg-surfaceContainerHighest px-2 @sm:gap-2"
+	class="surface-card @container sticky top-[calc(var(--app-header-height)+12px)] z-1 mt-6 mb-8 flex w-full items-center gap-1 rounded-lg py-1 pr-1 pl-3 transition-[box-shadow,border-color] duration-200 focus-within:border-(--hairline-strong) focus-within:shadow-[0_0_0_4px_color-mix(in_oklab,var(--color-tertiary)_18%,transparent)] @sm:gap-2"
 >
+	<Icon type="search" class="size-5 shrink-0 text-onSurfaceVariant" />
+
 	<input
 		bind:this={searchInput}
 		value={store.searchTerm}
 		type="text"
 		name="search"
 		placeholder={searchPlaceholder}
-		class="h-12 min-w-0 flex-1 bg-transparent pl-2 text-body-md placeholder:text-onSurface/54 focus:outline-none"
+		aria-label={searchPlaceholder}
+		class="h-11 min-w-0 flex-1 bg-transparent pl-1 text-body-lg placeholder:text-onSurfaceVariant/80 focus:outline-none"
 		oninput={(e) => searchHandler(e as unknown as InputEvent)}
 	/>
 

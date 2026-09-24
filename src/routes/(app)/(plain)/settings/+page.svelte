@@ -162,7 +162,7 @@
 <InstallAppBanner class="settings-max-width mt-6" />
 
 <section class="card settings-max-width mx-auto mt-6 w-full text-body-lg">
-	<div class="px-4 pt-4 text-title-sm">{m.settingsUpdatesTitle()}</div>
+	<div class="px-5 pt-5 text-eyebrow text-primary">{m.settingsUpdatesTitle()}</div>
 	<div class="flex items-center justify-between gap-4 p-4 max-sm:flex-col max-sm:items-start">
 		<div class="text-body-md text-onSurfaceVariant">
 			{m.settingsUpdatesSubtitle()}
@@ -183,7 +183,7 @@
 </section>
 
 <section class="card settings-max-width mx-auto mt-6 w-full text-body-lg">
-	<div class="px-4 pt-4 text-title-sm">{m.settingsStatsTitle()}</div>
+	<div class="px-5 pt-5 text-eyebrow text-primary">{m.settingsStatsTitle()}</div>
 	<div class="flex flex-col gap-2 p-4 text-body-md">
 		<div>{listeningStatLabel}</div>
 		<div>
@@ -194,7 +194,7 @@
 
 {#if directContactLink}
 	<section class="card settings-max-width mx-auto mt-6 w-full text-body-lg">
-		<div class="px-4 pt-4 text-title-sm">{m.settingsIssueTitle()}</div>
+		<div class="px-5 pt-5 text-eyebrow text-primary">{m.settingsIssueTitle()}</div>
 		<div class="flex items-center justify-between p-4">
 			<div class="text-body-md text-onSurfaceVariant">
 				{m.settingsIssueSubtitle()}
@@ -213,7 +213,7 @@
 
 {#if isRajneeshEnabled()}
 	<section class="card settings-max-width mx-auto mt-6 w-full text-body-lg">
-		<div class="px-4 pt-4 text-title-sm">Content</div>
+		<div class="px-5 pt-5 text-eyebrow text-primary">Content</div>
 		<div class="flex flex-col p-4">
 			<div>Discourse language</div>
 			<div class="mb-4 text-body-sm text-onSurfaceVariant">
@@ -232,7 +232,7 @@
 
 {#if !isRajneeshEnabled()}
 	<section class="card settings-max-width mx-auto mt-6 w-full text-body-lg">
-		<div class="px-4 pt-4 text-title-sm">{m.settingsAppearance()}</div>
+		<div class="px-5 pt-5 text-eyebrow text-primary">{m.settingsAppearance()}</div>
 
 		<div class="flex items-center justify-between p-4">
 			<div>{m.settingsApplicationTheme()}</div>

@@ -76,7 +76,7 @@
 	bind:this={menuEl}
 	role="application"
 	tabindex="-1"
-	class="pointer-events-auto fixed overscroll-contain rounded-sm bg-surfaceContainerHigh shadow-2xl backdrop:bg-transparent"
+	class="surface-float pointer-events-auto fixed overscroll-contain rounded-xl backdrop:bg-transparent"
 	onpointerdown={pointerDownHandler}
 	onkeydown={keydownHandler}
 	onclose={() => {
@@ -84,14 +84,14 @@
 		close()
 	}}
 >
-	<div role="menu" class="flex flex-col py-2">
+	<div role="menu" class="flex flex-col py-1.5">
 		{#each items as item}
 			<button
 				{@attach ripple()}
 				role="menuitem"
 				class={[
-					'interactable relative flex min-h-10 grow items-center gap-4 px-4 py-2 text-left text-body-md -outline-offset-2 select-none',
-					item.selected && 'bg-surfaceVariant text-primary',
+					'interactable relative mx-1.5 flex min-h-10 grow items-center gap-4 rounded-md px-3 py-2 text-left text-body-md -outline-offset-2 select-none',
+					item.selected && 'bg-secondaryContainer text-onSurface',
 				]}
 				onclick={() => {
 					item.action()

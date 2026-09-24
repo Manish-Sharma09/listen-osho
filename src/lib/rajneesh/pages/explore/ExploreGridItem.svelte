@@ -10,6 +10,8 @@
 	import type { AlbumData } from '$lib/library/get/value'
 	import { createAlbumQuery } from '$lib/library/get/value-queries'
 	import Artwork from '$lib/components/Artwork.svelte'
+	import Icon from '$lib/components/icon/Icon.svelte'
+	import { tilt } from '$lib/rajneesh/attachments/tilt.ts'
 	import { snackbar } from '$lib/components/snackbar/snackbar.ts'
 
 	export interface ExploreItemGridItemProps {
@@ -107,11 +109,14 @@
 	}
 </script>
 
+<!--
+	The anchor is the virtual list item (absolutely positioned, paint-contained), so the 3D tilt
+	lives on an inner card with a little padding around it to keep the tilt from being clipped.
+-->
 <a
-	{@attach ripple()}
 	{...props}
 	role="listitem"
-	class={[className, 'interactable flex flex-col rounded-lg bg-surfaceContainerHigh']}
+	class={[className, 'explore-card group block rounded-xl p-1 -outline-offset-2']}
 	href={linkProps?.href}
 	data-sveltekit-replacestate={linkProps?.shouldReplace}
 	oncontextmenu={(e) => {
@@ -122,22 +127,37 @@
 		})
 	}}
 >
-	<Artwork
-		src={artworkSrc()}
-		fallbackIcon="album"
-		class="w-full rounded-[inherit]"
-	/>
-
 	<div
-		class="flex h-18 w-full flex-col justify-center overflow-hidden px-2 text-center text-onSurfaceVariant"
+		{@attach ripple()}
+		{@attach tilt({ max: 9, scale: 1.02 })}
+		class="surface-card interactable h-full flex-col items-stretch rounded-xl p-2 transition-[border-color] duration-200 group-hover:border-(--hairline-strong)"
 	>
-		{#if query.loading}
-			<div class="mb-2 h-2 rounded-xs bg-onSurface/10"></div>
-			<div class="h-1 w-1/8 rounded-xs bg-onSurface/20"></div>
-		{:else if query.error}
-			{m.errorUnexpected()}
-		{:else if item}
-			{@render children(item)}
-		{/if}
+		<div class="relative overflow-hidden rounded-lg">
+			<Artwork
+				src={artworkSrc()}
+				fallbackIcon="album"
+				class={[
+					'w-full rounded-lg ring-0 [&_img]:transition-transform [&_img]:duration-700 [&_img]:ease-calm group-hover:[&_img]:scale-105',
+					query.loading && 'skeleton',
+				]}
+			/>
+			<span
+				class="absolute right-2 bottom-2 flex size-9 translate-y-2 items-center justify-center rounded-full bg-primary text-onPrimary opacity-0 shadow-float transition-[opacity,translate] duration-300 ease-calm group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100"
+				aria-hidden="true"
+			>
+				<Icon type="headphones" class="size-4" />
+			</span>
+		</div>
+
+		<div class="flex h-16 w-full flex-col justify-center overflow-hidden px-1.5 text-left text-onSurfaceVariant">
+			{#if query.loading}
+				<div class="skeleton mb-2 h-3 w-3/4 rounded-full"></div>
+				<div class="skeleton h-2 w-1/3 rounded-full"></div>
+			{:else if query.error}
+				<span class="text-body-sm text-error">{m.errorUnexpected()}</span>
+			{:else if item}
+				{@render children(item)}
+			{/if}
+		</div>
 	</div>
 </a>

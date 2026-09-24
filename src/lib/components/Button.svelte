@@ -59,7 +59,7 @@
 		'interactable',
 		KIND_CLASS_MAP[kind],
 		kind !== 'blank' &&
-			'base-button flex h-10 items-center justify-center gap-2 rounded-3xl px-6 text-label-lg transition-[outline-width] duration-150',
+			'base-button flex h-10 items-center justify-center gap-2 rounded-full px-4 text-label-lg transition-[outline-width,box-shadow,background-color,translate,scale] duration-200 ease-calm active:scale-[0.97]',
 		restProps.class,
 	]}
 >
@@ -71,9 +71,19 @@
 <style lang="postcss">
 	@reference '../../app.css';
 
+	/* DESIGN.md button-primary: ink pill */
 	.filled-button {
 		background: var(--color-primary);
 		color: var(--color-onPrimary);
+		box-shadow:
+			inset 0 1px 0 0 rgb(255 255 255 / 0.12),
+			0 1px 2px rgb(0 0 0 / 0.12);
+
+		@media (any-hover: hover) {
+			&:not([disabled]):hover {
+				background: color-mix(in oklab, var(--color-primary) 86%, var(--color-onPrimary));
+			}
+		}
 	}
 
 	.tonal-button {
@@ -81,21 +91,25 @@
 		color: var(--color-onSecondaryContainer);
 	}
 
+	/* DESIGN.md button-secondary: elevated pill with a hairline */
 	.outlined-button {
-		color: var(--color-primary);
-		border: 1px solid var(--color-outline);
+		color: var(--color-onSurface);
+		background: var(--color-surfaceContainerLowest);
+		border: 1px solid var(--hairline);
+		box-shadow: var(--shadow-whisper);
 	}
 
 	.flat-button {
-		color: var(--color-primary);
+		color: var(--color-tertiary);
 		padding-left: --spacing(3);
 		padding-right: --spacing(3);
 	}
 
 	.base-button[disabled] {
 		cursor: default;
-		background-color: --alpha(var(--color-onSurface) / 12%);
-		border-color: --alpha(var(--color-onSurface) / 38%);
+		box-shadow: none;
+		background-color: --alpha(var(--color-onSurface) / 8%);
+		border-color: transparent;
 		color: --alpha(var(--color-onSurface) / 38%);
 	}
 </style>

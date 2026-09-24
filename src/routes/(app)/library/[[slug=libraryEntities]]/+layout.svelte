@@ -13,7 +13,6 @@
 	import PlaylistListContainer from '$lib/components/playlists/PlaylistListContainer.svelte'
 	import TracksListContainer from '$lib/components/tracks/TracksListContainer.svelte'
 	import { initPageQueriesDynamic } from '$lib/db/query/page-query.svelte.ts'
-	import { isMobile } from '$lib/helpers/utils/ua.ts'
 	import { useSetOverlaySnippet } from '$lib/layout-bottom-bar.svelte.ts'
 	import { getPlaylistMenuItems } from '$lib/menu-actions/playlists.ts'
 	import { isRajneeshEnabled } from '$lib/rajneesh/feature-flags.ts'
@@ -23,6 +22,9 @@
 	import ExploreListContainer from '$lib/rajneesh/pages/explore/ExploreListContainer.svelte'
 	import TranscriptSearchResults from '$lib/rajneesh/transcript/search/TranscriptSearchResults.svelte'
 	import { getNavItems } from '$lib/rajneesh/ui/nav-items.ts'
+	import BottomNav from '$lib/rajneesh/components/nav/BottomNav.svelte'
+	import TopNav from '$lib/rajneesh/components/nav/TopNav.svelte'
+	import EmptyState from '$lib/rajneesh/components/ui/EmptyState.svelte'
 	import Search from './Search.svelte'
 
 	const { data, children } = $props()
@@ -36,7 +38,6 @@
 
 	const itemsIds = $derived(data.itemsIdsQuery.value)
 	const slug = $derived(data.slug)
-	const isHandHeldDevice = isMobile()
 
 	interface NavItem {
 		slug: typeof slug
@@ -61,65 +62,66 @@
 	}
 </script>
 
-{#snippet navItemsSnippet(className: string)}
-	{#each navItems as item}
-		<Button
-			as="a"
-			href={`/library/${item.slug}`}
-			kind="blank"
-			tooltip={item.title}
-			class={['flex shrink-0 items-center justify-center', className]}
-		>
-			<div
-				class={[
-					'flex items-center justify-center rounded-full p-2',
-					item.slug === slug && 'bg-secondaryContainer text-onSecondaryContainer',
-				]}
-			>
-				<Icon type={item.icon} />
-			</div>
-		</Button>
-	{/each}
+{#snippet layoutBottom()}
+	<!-- Below the sm breakpoint every device gets the bottom tab bar -->
+	<BottomNav
+		items={navItems}
+		activeSlug={slug}
+		class="pointer-events-auto -mt-2 w-full sm:hidden active-view-regular:view-name-[bottom-bar]"
+	/>
 {/snippet}
 
-{#snippet layoutBottom()}
-	{#if isHandHeldDevice}
-		<div
-			class="pointer-events-auto -mt-2 grid h-16 w-full grid-cols-[repeat(auto-fit,minmax(0,1fr))] bg-surfaceContainer sm:hidden active-view-regular:view-name-[bottom-bar]"
-		>
-			{@render navItemsSnippet('h-full')}
-		</div>
-	{/if}
+{#snippet pageIntro(eyebrow: string, title: string, description: string)}
+	<header class="animate-rise pt-10 pb-2 sm:pt-14">
+		<div class="mb-3 text-eyebrow text-onSurfaceVariant">{eyebrow}</div>
+		<h1 class="text-headline-lg text-balance sm:text-display-xl">{title}</h1>
+		<p class="mt-3 max-w-2xl text-body-lg text-onSurfaceVariant">{description}</p>
+	</header>
 {/snippet}
 
 {#if layoutMode !== 'details'}
-	<div
-		class={[
-			'desktop-sidebar fixed z-1 mt-20 h-max w-max flex-col items-center gap-2 [@media(max-height:500px)]:mt-2',
-			isHandHeldDevice ? 'hidden sm:flex' : 'flex',
-		]}
-	>
-		{@render navItemsSnippet('h-14 w-20')}
-
+	<TopNav items={navItems} activeSlug={slug}>
 		{#if (slug === 'albums' || slug === 'artists') && isWideLayout}
 			<IconButton
 				icon="sidePanel"
 				tooltip={main.librarySplitLayoutEnabled
 					? m.librarySplitViewDisable()
 					: m.librarySplitViewEnable()}
-				class={['mt-4', main.librarySplitLayoutEnabled && 'rotate-180']}
+				class={[
+					'size-9 rounded-md! border border-(--hairline) bg-surfaceContainerLowest max-sm:hidden',
+					main.librarySplitLayoutEnabled && 'rotate-180',
+				]}
 				onclick={() => {
 					main.librarySplitLayoutEnabled = !main.librarySplitLayoutEnabled
 				}}
 			/>
 		{/if}
-	</div>
+	</TopNav>
+
+	{#if slug !== 'shorts'}
+		<!-- Reserves the space under the fixed top bar; Shorts is full-bleed and lets the bar float -->
+		<div class="h-(--app-header-height) shrink-0" aria-hidden="true"></div>
+	{/if}
 {/if}
 
 <ListDetailsLayout mode={layoutMode} class="mx-auto w-full max-w-(--app-max-content-width) grow">
 	{#snippet list(mode)}
-		<div class={[isHandHeldDevice ? 'sm:pl-20' : 'pl-20', 'flex grow flex-col']}>
-			<div class={[mode === 'both' && 'w-100', 'flex grow flex-col px-4']}>
+		<div class={['flex grow flex-col', mode === 'both' && 'pt-(--app-header-height)']}>
+			<div class={[mode === 'both' && 'w-100', 'flex grow flex-col px-4 sm:px-6']}>
+				{#if slug === 'explore'}
+					{@render pageIntro(
+						'Library',
+						'Explore every series.',
+						'Search series by name, or search inside thousands of transcripts to find the exact moment a word was spoken.',
+					)}
+				{:else if slug === 'bookmarks'}
+					{@render pageIntro(
+						'Saved moments',
+						'Bookmarks.',
+						'Every moment you marked in the player, ready to pick up again.',
+					)}
+				{/if}
+
 				{#if slug !== 'home' && slug !== 'shorts'}
 					<Search name={data.pluralTitle()} sortOptions={data.sortOptions} store={data.store} />
 				{/if}
@@ -164,16 +166,11 @@
 								<TranscriptSearchResults searchTerm={data.store.searchTerm} />
 							</div>
 						{:else if itemsIds.length === 0}
-							<div class="relative m-auto flex flex-col items-center text-center">
-								<Icon type="magnify" class="my-auto size-35 opacity-54" />
-
-								<div class="text-body-lg">
-									{m.libraryNoResults()}
-								</div>
-								<div>
-									{m.libraryNoResultsExplanation()}
-								</div>
-							</div>
+							<EmptyState
+								icon="magnify"
+								title={m.libraryNoResults()}
+								description={m.libraryNoResultsExplanation()}
+							/>
 						{:else if slug === 'tracks'}
 							<TracksListContainer items={itemsIds} />
 						{:else if slug === 'albums'}
@@ -203,8 +200,9 @@
 	{#snippet details()}
 		<div
 			class={[
-				'pointer-events-auto flex h-full flex-col rounded-3xl',
-				layoutMode === 'both' && 'mx-4 mt-4 border border-primary/5 bg-surfaceContainer',
+				'pointer-events-auto flex h-full flex-col rounded-2xl',
+				// The details page draws its own cards; in split view it only needs a gutter
+				layoutMode === 'both' && 'mx-2',
 			]}
 		>
 			{#key page.url.pathname}
@@ -214,10 +212,3 @@
 	{/snippet}
 </ListDetailsLayout>
 
-<style lang="postcss">
-	@reference '../../../../app.css';
-
-	.desktop-sidebar {
-		left: max(0, (100% - var(--app-max-content-width)) / 2);
-	}
-</style>

@@ -6,7 +6,8 @@
 	"sideEffects": false,
 	"scripts": {
 		"prepare": "svelte-kit sync",
-		"dev": "vite dev",
+		"dev": "pnpm run ensure:pagefind && vite dev",
+		"ensure:pagefind": "tsx scripts/ensure-pagefind-index.ts",
 		"build": "pnpm run build:pagefind && vite build",
 		"build:pagefind": "tsx scripts/build-pagefind-index.ts",
 		"preview": "vite preview",

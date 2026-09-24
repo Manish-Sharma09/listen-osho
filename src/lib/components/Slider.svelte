@@ -108,20 +108,24 @@
 		class="pointer-events-none absolute top-0 left-0 mr-2 h-full w-[calc(100%-4px)]"
 		style={getTransform()}
 	>
-		<div class="thumb h-full w-1 rounded-lg bg-primary transition-transform"></div>
+		<div class="flex h-full items-center">
+			<div
+				class="thumb size-3.5 -translate-x-1/2 rounded-full bg-primary shadow-[0_0_0_4px_color-mix(in_oklab,var(--color-primary)_22%,transparent)] transition-transform"
+			></div>
+		</div>
 	</div>
 
 	<div
-		class="pointer-events-none absolute inset-0 my-auto mr-2 h-4 w-[calc(100%-4px)] overflow-clip transition-[border-radius] duration-50 contain-strict"
+		class="pointer-events-none absolute inset-0 my-auto mr-2 h-1.5 w-[calc(100%-4px)] overflow-clip rounded-full transition-[border-radius] duration-50 contain-strict"
 		style={getBarBorder()}
 	>
 		<div
-			class="rounded-r-0.5 absolute inset-y-0 -left-full my-auto h-4 w-full bg-primary"
+			class="absolute inset-y-0 -left-full my-auto h-1.5 w-full rounded-full bg-primary"
 			style={getTransform('- 6px')}
 		></div>
 
 		<div
-			class="rounded-l-0.5 pointer-events-none absolute top-0 left-0 h-full w-full bg-primary/30"
+			class="pointer-events-none absolute top-0 left-0 h-full w-full rounded-full bg-onSurface/15"
 			style={getTransform('+ 10px')}
 		></div>
 	</div>
@@ -130,8 +134,8 @@
 <style lang="postcss">
 	@reference '../../app.css';
 
-	input:is(:active, :focus-visible) ~ div > .thumb {
-		transform: scaleX(0.5);
+	input:is(:active, :focus-visible) ~ div .thumb {
+		scale: 1.25;
 	}
 
 	input::-webkit-slider-thumb {

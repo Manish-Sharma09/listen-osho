@@ -193,7 +193,7 @@
 			close()
 		}}
 		class={[
-			'relative m-auto flex flex-col rounded-2xl bg-surfaceContainerHigh text-onSurface contain-content select-none focus:outline-none sm:rounded-3xl',
+			'surface-float relative m-auto flex flex-col rounded-2xl text-onSurface contain-content select-none focus:outline-none',
 			className,
 		]}
 	>
@@ -206,7 +206,7 @@
 				{#if showCloseButton}
 					<IconButton
 						icon="close"
-						class="bg-surfaceContainer"
+						class="surface-card"
 						tooltip="Close"
 						onclick={close}
 					/>
@@ -223,7 +223,7 @@
 			]}
 		>
 			{#if icon}
-				<Icon type={icon} class="text-secondary" />
+				<Icon type={icon} class="text-primary" />
 			{/if}
 
 			{#if title}

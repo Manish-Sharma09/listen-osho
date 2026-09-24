@@ -12,7 +12,7 @@ const BY_OSHO = '-by-osho-'
 // (transliteration variants of the same Hindi title). Maps transcript-derived
 // prefix -> catalog trackIdTpl prefix so those discourses still resolve.
 // Duplicated in scripts/build-pagefind-index.ts to allow standalone operation.
-const TRANSCRIPT_PREFIX_ALIASES: Record<string, string> = {
+export const TRANSCRIPT_PREFIX_ALIASES: Record<string, string> = {
 	'adhyatam-upanishad': 'adhyatma-upanishad',
 	'ajhun-chet-ganwar': 'ajhun-chet-gawar',
 	'ashtavakra-maha-geeta': 'ashtavakra-mahagitaa',

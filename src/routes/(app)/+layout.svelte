@@ -153,9 +153,9 @@
 />
 
 {#if navigating?.to}
-	<div class="page-loading-indicator fixed inset-x-0 top-0 z-20 h-1 bg-tertiary/40">
+	<div class="page-loading-indicator fixed inset-x-0 top-0 z-20 h-0.5 bg-onSurface/8">
 		<div
-			class="page-loading-indicator-bar h-1 w-full origin-top-left overflow-hidden bg-onTertiaryContainer"
+			class="page-loading-indicator-bar h-0.5 w-full origin-top-left overflow-hidden bg-linear-to-r from-sky via-tertiary to-saffron"
 		></div>
 	</div>
 {/if}

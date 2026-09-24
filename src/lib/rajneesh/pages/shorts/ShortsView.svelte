@@ -3,6 +3,9 @@
 	import { onMount, tick } from 'svelte'
 	import Button from '$lib/components/Button.svelte'
 	import Icon from '$lib/components/icon/Icon.svelte'
+	import EmptyState from '$lib/rajneesh/components/ui/EmptyState.svelte'
+	import Turntable from '$lib/rajneesh/components/three-d/Turntable.svelte'
+	import { getCatalog } from '$lib/rajneesh/stores/catalog.svelte.ts'
 	import { getLatestActiveMinutesByTrack } from '$lib/db/active-minutes.ts'
 	import { onDatabaseChange } from '$lib/db/events.ts'
 	import { dbGetAlbumTracksIdsByName, getLibraryItemIdFromUuid } from '$lib/library/get/ids.ts'
@@ -48,6 +51,20 @@
 
 	let viewportEl: HTMLDivElement
 	let activeIndex = $state<number>(-1)
+
+	// Series artwork for each short's turntable, looked up once from the in-memory catalog
+	const albumImageByName = $derived(
+		new Map(
+			(getCatalog()?.albums ?? []).map((album) => [
+				album.name,
+				typeof album.image === 'string' ? album.image : undefined,
+			]),
+		),
+	)
+	const shortProgress = $derived.by(() => {
+		const value = player.currentTime / player.duration
+		return Number.isFinite(value) ? Math.min(Math.max(value, 0), 1) : 0
+	})
 	let showScrollTip = $state(!localStorage.getItem(SCROLL_TIP_KEY))
 	let observer: IntersectionObserver | null = null
 
@@ -517,48 +534,49 @@ async function saveBookmarkForActiveShort() {
 	})
 </script>
 
+<div class="bg-mesh pointer-events-none fixed inset-0 -z-1 opacity-50" aria-hidden="true"></div>
+
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
 	bind:this={viewportEl}
 	onclick={handleUserTap}
-	class="shorts-viewport -mx-4 flex h-[100dvh] min-h-[100dvh] flex-col overflow-y-auto overscroll-y-none bg-surfaceContainerLow"
+	class="shorts-viewport -mx-4 flex h-[100dvh] min-h-[100dvh] flex-col overflow-y-auto overscroll-y-none sm:-mx-6"
 	style="scroll-snap-type: y mandatory;"
 >
 	{#if shorts.length === 0}
 		<div class="shorts-slide relative flex min-h-[100dvh] shrink-0 items-center justify-center p-6 text-onSurface">
-			<div class="w-full max-w-xl rounded-3xl border border-outlineVariant/40 bg-surfaceContainer p-8 text-center shadow-lg">
-				<div class="mb-2 text-title-lg">No shorts yet</div>
-				<div class="text-body-md opacity-70">
-					Add more tracks to your library to unlock random moments here.
-				</div>
-			</div>
+			<EmptyState
+				icon="vinylDisc"
+				title="No shorts yet"
+				description="Add more tracks to your library to unlock random moments here."
+				class="surface-card rounded-2xl"
+			/>
 		</div>
 	{:else}
 		{#each shorts as item, i (i)}
 			<div
 				data-slide-index={i}
-				class="shorts-slide relative flex min-h-[100dvh] shrink-0 flex-col bg-surfaceContainerLow px-6 pb-8 pt-10 text-onSurface"
+				class="shorts-slide relative flex min-h-[100dvh] shrink-0 flex-col px-6 pt-20 pb-8 text-onSurface"
 				use:observeSlide
 			>
-				<div class="relative z-10 flex min-h-[calc(100dvh-7rem)] w-full flex-col items-center justify-center">
-					<div class="mb-6 flex items-center justify-center">
-						<div class="relative flex size-56 items-center justify-center rounded-full border border-outlineVariant/45 bg-surfaceContainerHigh shadow-inner sm:size-72">
-							<Icon
-								type="vinylDisc"
-								class={[
-									'size-24 opacity-70 sm:size-32',
-									activeIndex === i && isCurrentAudioPlaying && 'disc-spin',
-								]}
-							/>
-						</div>
+				<div class="short-content relative z-10 flex min-h-[calc(100dvh-7rem)] w-full flex-col items-center justify-center">
+					<!-- Each moment gets its own turntable, carrying the series artwork -->
+					<div class="short-stage mb-6 w-64 sm:w-80">
+						<Turntable
+							src={albumImageByName.get(item.albumName)}
+							playing={activeIndex === i && isCurrentAudioPlaying}
+							progress={activeIndex === i ? shortProgress : 0}
+							interactive={false}
+						/>
 					</div>
 
 					<div class="pb-4 text-center">
-						<div class="mb-2 text-headline-lg">
+						<div class="mb-2 text-eyebrow text-onSurfaceVariant">Discourse {item.trackIndex}</div>
+						<div class="mx-auto mb-3 max-w-2xl text-headline-md text-balance sm:text-headline-lg">
 							{item.albumName} - {item.trackIndex}
 						</div>
-						<div class="mb-6 text-title-sm opacity-80 sm:text-title-md">
+						<div class="mb-8 font-mono text-title-sm text-onSurfaceVariant tabular-nums sm:text-title-md">
 							{activeIndex === i ? formatTimestamp(currentPlaybackTime) : formatTimestamp(item.startSeconds)}
 						</div>
 
@@ -593,20 +611,20 @@ async function saveBookmarkForActiveShort() {
 							{/if}
 
 							{#if activeIndex === i && !isCurrentAudioPlaying && !isLoading && !hasPlaybackError}
-								<span class="rounded-full border border-outlineVariant/45 bg-surfaceContainerHigh px-3 py-1.5 text-body-md">
+								<span class="surface-card animate-rise rounded-full px-4 py-2 text-body-md">
 									Tap anywhere to play
 								</span>
 							{/if}
 
 							{#if activeIndex === i && isLoading}
-								<span class="inline-flex items-center gap-2 rounded-full border border-outlineVariant/45 bg-surfaceContainerHigh px-3 py-1.5 text-body-md">
+								<span class="surface-card inline-flex items-center gap-2 rounded-full px-4 py-2 text-body-md">
 									<div class="loader-inline"></div>
 									Loading
 								</span>
 							{/if}
 
 							{#if activeIndex === i && hasPlaybackError}
-								<div class="inline-flex flex-wrap items-center justify-center gap-3 rounded-2xl border border-error/30 bg-errorContainer/80 px-3 py-2 text-body-sm text-onErrorContainer">
+								<div role="alert" class="inline-flex flex-wrap items-center justify-center gap-3 rounded-2xl border border-error/30 bg-errorContainer/80 px-3 py-2 text-body-sm text-onErrorContainer backdrop-blur-md">
 									<span>{player.playbackError}</span>
 									<Button
 										kind="outlined"
@@ -626,7 +644,7 @@ async function saveBookmarkForActiveShort() {
 				</div>
 
 				{#if i === 0 && showScrollTip}
-					<div class="scroll-tip absolute bottom-24 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-1 px-4 py-2 opacity-75">
+					<div class="scroll-tip surface-card absolute bottom-24 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-1 rounded-full px-4 py-2">
 						<Icon type="chevronUp" class="size-6 animate-bounce" />
 						<span class="text-body-sm">Swipe up for more</span>
 					</div>
@@ -645,7 +663,7 @@ async function saveBookmarkForActiveShort() {
 	onclick={(e) => e.stopPropagation()}
 >
 	{#if showBgMusicPicker}
-		<div class="mb-2 min-w-44 rounded-2xl bg-surfaceContainer/95 px-3 py-3 shadow-xl backdrop-blur-lg">
+		<div class="surface-float mb-2 min-w-48 animate-rise rounded-xl px-2 py-2">
 			<div class="px-3 pb-2 pt-1 text-body-sm font-medium opacity-50">Background Music</div>
 			{#each BG_MUSIC_OPTIONS as option (option.id)}
 				<button
@@ -653,7 +671,7 @@ async function saveBookmarkForActiveShort() {
 					class={[
 						'flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-body-sm transition-colors',
 						bgMusicState.selectedBgMusicId === option.id
-							? 'bg-secondaryContainer/80 text-onSecondaryContainer'
+							? 'bg-primary/15 text-onSurface'
 							: 'text-onSurface/80 hover:bg-onSurface/5',
 					]}
 				>
@@ -686,12 +704,12 @@ async function saveBookmarkForActiveShort() {
 
 	<div class="flex flex-col items-end gap-3">
 		<button
+			aria-label="Background music"
+			aria-expanded={showBgMusicPicker}
 			onclick={() => { showBgMusicPicker = !showBgMusicPicker }}
 			class={[
-				'flex size-10 items-center justify-center rounded-full shadow-lg backdrop-blur-md transition-colors',
-				bgMusicState.bgMusicPlaying
-					? 'bg-secondaryContainer/90 text-onSecondaryContainer'
-					: 'bg-surfaceContainer/80 text-onSurface/70',
+				'surface-card flex size-12 items-center justify-center rounded-full transition-colors',
+				bgMusicState.bgMusicPlaying ? 'text-tertiary' : 'text-onSurface/70',
 			]}
 		>
 			<Icon
@@ -701,15 +719,17 @@ async function saveBookmarkForActiveShort() {
 		</button>
 
 		<button
+			aria-label="Bookmark this moment"
 			onclick={() => void saveBookmarkForActiveShort()}
-			class="flex size-10 items-center justify-center rounded-full bg-surfaceContainer/80 text-onSurface/70 shadow-lg backdrop-blur-md transition-colors hover:bg-surfaceContainerHigh"
+			class="surface-card flex size-12 items-center justify-center rounded-full text-onSurface/70 transition-colors hover:text-onSurface"
 		>
 			<Icon type="bookmark" class="size-5" />
 		</button>
 
 		<button
+			aria-label="Share this moment"
 			onclick={handleShareShort}
-			class="flex size-10 items-center justify-center rounded-full bg-surfaceContainer/80 text-onSurface/70 shadow-lg backdrop-blur-md transition-colors hover:bg-surfaceContainerHigh"
+			class="surface-card flex size-12 items-center justify-center rounded-full text-onSurface/70 transition-colors hover:text-onSurface"
 		>
 			<Icon type="shareVariant" class="size-5" />
 		</button>
@@ -732,6 +752,31 @@ async function saveBookmarkForActiveShort() {
 		border-bottom-color: transparent;
 		border-radius: 50%;
 		animation: spin 0.8s linear infinite;
+	}
+	/* Scroll-driven depth: each slide tilts in from below and away above, like pages in 3D */
+	@supports (animation-timeline: view()) {
+		@media (prefers-reduced-motion: no-preference) {
+			.short-content {
+				animation: short-depth linear both;
+				animation-timeline: view();
+				animation-range: cover 0% cover 100%;
+			}
+		}
+	}
+	@keyframes short-depth {
+		0% {
+			transform: perspective(1200px) rotateX(24deg) translateY(10%) scale(0.88);
+			opacity: 0.15;
+		}
+		35%,
+		65% {
+			transform: none;
+			opacity: 1;
+		}
+		100% {
+			transform: perspective(1200px) rotateX(-24deg) translateY(-10%) scale(0.88);
+			opacity: 0.15;
+		}
 	}
 	:global(.disc-spin) {
 		animation: spin 6s linear infinite;

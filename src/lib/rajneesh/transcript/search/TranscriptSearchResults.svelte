@@ -1,4 +1,5 @@
 <script lang="ts">
+	import EmptyState from '$lib/rajneesh/components/ui/EmptyState.svelte'
 	import { tick } from 'svelte'
 	import Button from '$lib/components/Button.svelte'
 	import CommonDialog from '$lib/components/dialog/CommonDialog.svelte'
@@ -379,47 +380,64 @@
 
 <div class="flex w-full flex-col gap-4 pb-8">
 	{#if loading}
-		<div class="flex flex-col items-center gap-2 py-8 text-onSurfaceVariant">
-			<div class="size-8 animate-pulse rounded-full border-2 border-primary border-t-transparent"></div>
-			<div class="text-body-md">{m.libraryTranscriptSearching()}</div>
+		<div class="flex flex-col gap-3" role="status" aria-label={m.libraryTranscriptSearching()}>
+			<div class="text-eyebrow text-onSurfaceVariant">{m.libraryTranscriptSearching()}</div>
+			{#each { length: 3 }, index (index)}
+				<div class="skeleton h-36 rounded-xl"></div>
+			{/each}
 		</div>
 	{:else if error}
-		<div class="py-8 text-center text-error">{error}</div>
+		<EmptyState icon="alertCircle" tone="error" title={error} />
 	{:else if results.length === 0}
-		<div class="flex flex-col items-center gap-2 py-8 text-center text-onSurfaceVariant">
-			<Icon type="magnify" class="size-12 opacity-54" />
-			<div class="text-body-lg">{m.libraryTranscriptSearchNoResults()}</div>
-		</div>
+		<EmptyState icon="magnify" title={m.libraryTranscriptSearchNoResults()} />
 	{:else}
-		<div class="text-body-sm font-medium text-onSurfaceVariant">
-			{m.libraryTranscriptSearchResultsCount({ count: totalCount })}
+		<div class="flex items-center gap-3">
+			<span class="text-eyebrow text-primary">Inside the transcripts</span>
+			<span class="h-px flex-1 bg-(--hairline)" aria-hidden="true"></span>
+			<span class="text-body-sm text-onSurfaceVariant">
+				{m.libraryTranscriptSearchResultsCount({ count: totalCount })}
+			</span>
 		</div>
 		{#if results.length > 0 && !results[0]?.exactMatch && searchedInHindi}
 			<div
-				class="rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 text-body-sm text-onSurfaceVariant"
+				class="surface-card rounded-2xl px-4 py-3 text-body-sm text-onSurfaceVariant"
 			>
 				{m.libraryTranscriptSearchTypeHindiHint()}
 			</div>
 		{/if}
-		<ul class="flex flex-col gap-3" role="list">
+		<ul class="grid w-full gap-4 lg:grid-cols-2" role="list">
 			{#each results as item (item.id)}
 				<li
-					class="flex flex-col gap-2 rounded-lg border border-primary/10 bg-surfaceContainerHigh p-4"
+					class="surface-card flex min-w-0 animate-rise flex-col gap-4 rounded-xl p-5 transition-shadow duration-300 hover:shadow-lift"
 				>
 					<div
-						class="line-clamp-5 min-h-[4.5rem] whitespace-pre-wrap text-body-md text-onSurface [&_mark]:bg-primary/20 [&_mark]:rounded [&_mark]:px-0.5"
+						class="line-clamp-5 min-h-[4.5rem] whitespace-pre-wrap text-body-md text-onSurface [&_mark]:rounded [&_mark]:bg-sky/30 [&_mark]:px-0.5 [&_mark]:text-onSurface"
 						style="font-family: 'Noto Sans Devanagari', var(--font-sans)"
 					>{@html item.excerpt}</div>
-					<div class="flex items-center justify-between gap-2">
-						<div class="min-w-0 flex-1 truncate">
-							<div class="truncate font-medium text-onSurface">{item.trackName || m.unknown()}</div>
+					<div
+						class="mt-auto flex flex-wrap items-center justify-between gap-x-3 gap-y-3 border-t border-(--hairline) pt-4"
+					>
+						<div class="flex min-w-0 flex-1 basis-48 items-center gap-3">
+							<span
+								class="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/12 text-primary"
+								aria-hidden="true"
+							>
+								<Icon type="headphones" class="size-4" />
+							</span>
+							<div class="grid min-w-0">
+								<div class="truncate text-title-sm text-onSurface">{item.trackName || m.unknown()}</div>
+								{#if item.albumName}
+									<div class="truncate text-body-sm text-onSurfaceVariant">{item.albumName}</div>
+								{/if}
+							</div>
 						</div>
-						<div class="flex shrink-0 items-center gap-2">
-							<Button kind="outlined" class="!px-4" onclick={() => void openReadDialog(item)}>
+						<div class="flex shrink-0 items-center gap-2 max-sm:w-full [&>*]:max-sm:flex-1">
+							<Button kind="outlined" onclick={() => void openReadDialog(item)}>
+								<Icon type="fileDocumentOutline" class="size-5" />
 								Read
 							</Button>
-							<Button kind="filled" class="!px-4" onclick={() => playTrack(item.trackId)}>
-								<Icon type="play" />
+							<Button kind="filled" onclick={() => playTrack(item.trackId)}>
+								<Icon type="play" class="size-5" />
 								{m.play()}
 							</Button>
 						</div>
@@ -457,7 +475,7 @@
 		<IconButton
 			icon="play"
 			tooltip="Play this result"
-			class="size-10 bg-surfaceContainer sm:size-11"
+			class="surface-card size-10 sm:size-11"
 			disabled={!readDialogItem}
 			onclick={() => readDialogItem && playTrack(readDialogItem.trackId)}
 		/>
@@ -465,14 +483,14 @@
 			<IconButton
 				icon="chevronRight"
 				tooltip="Previous result"
-				class="bg-surfaceContainer [&_svg]:rotate-180"
+				class="surface-card [&_svg]:rotate-180"
 				disabled={!canOpenPreviousResult || readDialogLoading}
 				onclick={() => void openRelativeReadDialog(-1)}
 			/>
 			<IconButton
 				icon="chevronRight"
 				tooltip="Next result"
-				class="bg-surfaceContainer"
+				class="surface-card"
 				disabled={!canOpenNextResult || readDialogLoading}
 				onclick={() => void openRelativeReadDialog(1)}
 			/>
@@ -520,7 +538,7 @@
 			{:else}
 				<div
 					bind:this={readDialogContentEl}
-					class="max-h-[64dvh] overflow-y-auto whitespace-pre-wrap pr-1 select-text text-body-md text-onSurface sm:max-h-[70dvh] sm:pr-2 [&_mark]:rounded [&_mark]:bg-primary/20 [&_mark]:px-0.5"
+					class="max-h-[64dvh] overflow-y-auto whitespace-pre-wrap pr-1 select-text text-body-md text-onSurface sm:max-h-[70dvh] sm:pr-2 [&_mark]:rounded [&_mark]:bg-sky/30 [&_mark]:px-0.5 [&_mark]:text-onSurface"
 					style="font-family: 'Noto Sans Devanagari', var(--font-sans)"
 				>
 					{@html readDialogHtml}

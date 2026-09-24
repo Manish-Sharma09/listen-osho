@@ -141,7 +141,10 @@
 	{@attach ripple()}
 	{...props}
 	role="listitem"
-	class={[className, 'interactable flex flex-col rounded-lg bg-surfaceContainerHigh']}
+	class={[
+		className,
+		'surface-card interactable flex flex-col rounded-xl p-1.5 transition-[border-color] duration-200 hover:border-(--hairline-strong)',
+	]}
 	href={linkProps?.href}
 	data-sveltekit-replacestate={linkProps?.shouldReplace}
 	oncontextmenu={(e) => {
@@ -155,15 +158,15 @@
 	<Artwork
 		src={artworkSrc()}
 		fallbackIcon={type === 'albums' ? 'album' : 'person'}
-		class="w-full rounded-[inherit]"
+		class={['w-full rounded-lg ring-0', query.loading && 'skeleton']}
 	/>
 
 	<div
 		class="flex h-18 w-full flex-col justify-center overflow-hidden px-2 text-center text-onSurfaceVariant"
 	>
 		{#if query.loading}
-			<div class="mb-2 h-2 rounded-xs bg-onSurface/10"></div>
-			<div class="h-1 w-1/8 rounded-xs bg-onSurface/20"></div>
+			<div class="skeleton mx-auto mb-2 h-3 w-3/4 rounded-full"></div>
+			<div class="skeleton mx-auto h-2 w-1/3 rounded-full"></div>
 		{:else if query.error}
 			{m.errorUnexpected()}
 		{:else if item}

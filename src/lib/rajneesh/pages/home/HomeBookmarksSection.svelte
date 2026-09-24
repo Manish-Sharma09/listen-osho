@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Button from '$lib/components/Button.svelte'
 	import BookmarkCard from '$lib/rajneesh/components/bookmarks/BookmarkCard.svelte'
+	import SectionHeader from '$lib/rajneesh/components/ui/SectionHeader.svelte'
 	import {
 		getResolvedBookmarks,
 		onBookmarksDataChange,
@@ -31,15 +32,16 @@
 </script>
 
 {#if visibleBookmarks.length > 0}
-	<section class="py-4">
-		<div class="mb-4 flex items-center justify-between gap-3">
-			<h2 class="text-title-lg">Bookmarks</h2>
-			<Button kind="outlined" as="a" href="/library/bookmarks">
-				View all
-			</Button>
-		</div>
+	<section class="py-6" aria-labelledby="home-bookmarks-title">
+		<SectionHeader id="home-bookmarks-title" eyebrow="Moments you saved" title="Bookmarks">
+			{#snippet action()}
+				<Button kind="outlined" as="a" href="/library/bookmarks">
+					View all
+				</Button>
+			{/snippet}
+		</SectionHeader>
 
-		<div class="flex flex-col gap-3">
+		<div class="grid gap-3 lg:grid-cols-2">
 			{#each visibleBookmarks as bookmark (bookmark.id)}
 				<BookmarkCard
 					{bookmark}

@@ -32,13 +32,16 @@
 {#if installEvent && !isInstalled}
 	<section
 		class={[
-			'card mx-auto w-full gap-2 bg-primary/12 p-4',
+			'surface-card mx-auto flex w-full flex-col gap-2 rounded-xl p-5',
 			className,
 		]}
 	>
-		<div class="text-title-md font-medium">{m.settingsInstallAppTitle()}</div>
+		<div class="flex items-center gap-2 text-title-md">
+			<span class="size-2 rounded-full bg-sky" aria-hidden="true"></span>
+			{m.settingsInstallAppTitle()}
+		</div>
 		<div class="flex w-full flex-col items-center justify-between gap-3 sm:flex-row">
-			<div class="text-body-md text-on-surface-variant">
+			<div class="text-body-md text-onSurfaceVariant">
 				{m.settingsInstallAppExplanation({
 					device: isHandHeldDevice ? m.settingsInstallAppHomeScreen() : m.settingsInstallAppDesktop(),
 				})}

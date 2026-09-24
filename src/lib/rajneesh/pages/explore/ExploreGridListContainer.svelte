@@ -14,15 +14,16 @@
 
 	let containerWidth = $state(0)
 
-	const gap = 8
+	const gap = 16
 
 	const sizes = $derived.by(() => {
-		const minWidth = containerWidth > 600 ? 180 : 140
+		const minWidth = containerWidth > 600 ? 200 : 150
 
 		const columns = safeInteger(Math.floor(containerWidth / minWidth), 1)
 		const width = safeInteger(Math.floor((containerWidth - gap * (columns - 1)) / columns))
 
-		const height = width + 72
+		// Square artwork (inset by the 8px card padding) + 64px caption + padding
+		const height = width + 64
 
 		return {
 			width,

@@ -134,7 +134,15 @@ export const load: LayoutLoad = async (event): Promise<LoadResult> => {
 		isWide: boolean,
 		itemUuid: string | undefined,
 	): LayoutMode => {
-		if (slug === 'tracks' || slug === 'home' || slug === 'shorts' || slug === 'bookmarks') {
+		// Explore items open the album details route, so a split view here would only
+		// ever show the empty "select something" placeholder next to a cramped list.
+		if (
+			slug === 'tracks' ||
+			slug === 'home' ||
+			slug === 'shorts' ||
+			slug === 'bookmarks' ||
+			slug === 'explore'
+		) {
 			return 'list'
 		}
 

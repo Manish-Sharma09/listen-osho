@@ -45,13 +45,17 @@
 	})
 </script>
 
-<div class="flex items-center gap-2 rounded-2xl border border-primary/8 bg-surfaceContainerHigh px-3 py-2">
-	<div class="rounded-xl bg-secondaryContainer px-3 py-2 text-body-sm tabular-nums text-onSecondaryContainer">
+<div
+	class="surface-card flex animate-rise items-center gap-3 rounded-2xl px-3 py-2.5 transition-shadow duration-300 hover:shadow-lift"
+>
+	<div
+		class="shrink-0 rounded-xl bg-primary/12 px-3 py-2 font-mono text-label-md tabular-nums text-primary"
+	>
 		{formatBookmarkTimestamp(bookmark.timestampSeconds)}
 	</div>
 
 	<div class="min-w-0 flex-1">
-		<div class="truncate text-body-md text-onSurface">{bookmark.discourseName}</div>
+		<div class="truncate text-title-sm text-onSurface">{bookmark.discourseName}</div>
 		<div class="truncate text-body-sm text-onSurfaceVariant">
 			{bookmark.trackName}
 			{#if bookmark.note}
@@ -63,7 +67,7 @@
 	<IconButton
 		icon="shareVariant"
 		tooltip="Share bookmark"
-		class="size-10 rounded-xl bg-surfaceContainerHighest"
+		class="size-10 text-onSurfaceVariant hover:text-onSurface"
 		onclick={onShare}
 	/>
 
@@ -71,7 +75,7 @@
 		<IconButton
 			icon="moreVertical"
 			tooltip="More bookmark actions"
-			class="size-10 rounded-xl bg-surfaceContainerHighest"
+			class="size-10 text-onSurfaceVariant hover:text-onSurface"
 			onclick={(event) => {
 				menu.showFromEvent(event, menuItems, {
 					anchor: true,
@@ -87,7 +91,7 @@
 	<IconButton
 		icon="play"
 		tooltip="Play from bookmark"
-		class="size-10 rounded-xl bg-secondaryContainer text-onSecondaryContainer"
+		class="size-10 bg-primary text-onPrimary shadow-float"
 		onclick={onPlay}
 	/>
 </div>
