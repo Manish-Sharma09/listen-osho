@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Listen Osho</string>
+    <string name="title_activity_main">Listen Osho</string>
+    <string name="package_name">com.listenosho.app</string>
+    <string name="custom_url_scheme">com.listenosho.app</string>
+</resources>

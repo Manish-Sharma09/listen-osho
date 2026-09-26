@@ -16,6 +16,10 @@
 	var isLinkedin = userAgent.indexOf('LinkedIn') > -1;
 	var isTelegram = userAgent.indexOf('Telegram') > -1;
 
+	// --- Our own Android app (capacitor.config.ts appendUserAgent) ---
+	// It runs in a WebView by design and bundles every file, so it needs no service worker.
+	var isNativeApp = userAgent.indexOf('ListenOshoApp') > -1;
+
 	// --- Known lightweight / WebView-based Android browsers ---
 	// Via browser wraps Android WebView but mimics Chrome's UA. Its UA
 	// typically does NOT contain "Chrome/" the way real Chrome does, or
@@ -37,13 +41,14 @@
 		userAgent.indexOf('Safari') === -1;
 
 	var isWebView =
-		isInstagram ||
+		!isNativeApp &&
+		(isInstagram ||
 		isFacebook ||
 		isLine ||
 		isLinkedin ||
 		isTelegram ||
 		isAndroidWebView ||
-		isLikelyIOSWebView;
+		isLikelyIOSWebView);
 
 	var hasNoModule =
 		typeof HTMLScriptElement !== 'undefined' &&
@@ -71,7 +76,7 @@
 		hasPromiseWithResolvers &&
 		hasCssSupport &&
 		hasContainerQueries &&
-		hasServiceWorker;
+		(hasServiceWorker || isNativeApp);
 
 	var shouldBlock = isWebView || !isSupportedBrowser;
 

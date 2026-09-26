@@ -17,7 +17,8 @@
 	role={tone === 'error' ? 'alert' : 'status'}
 	class={['m-auto flex max-w-md animate-rise flex-col items-center px-6 py-16 text-center', className]}
 >
-	<div class="relative mb-6 flex size-24 items-center justify-center">
+	<!-- mb-12 clears the outer ring, which overhangs the box by 2.25rem -->
+	<div class="relative mb-12 flex size-24 items-center justify-center">
 		<!-- Concentric hairline rings, like grooves on a record -->
 		<div class="absolute -inset-4 rounded-full border border-(--hairline)"></div>
 		<div class="absolute -inset-9 rounded-full border border-(--hairline) opacity-60"></div>

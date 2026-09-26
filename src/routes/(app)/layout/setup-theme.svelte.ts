@@ -1,3 +1,5 @@
+import { page } from '$app/state'
+import { isNativeApp, setNativeSystemBarsColor } from '$lib/helpers/native-app.ts'
 import { isSafari } from '$lib/helpers/utils/ua'
 
 const updateThemeMetaElement = (element: Element) => {
@@ -28,6 +30,17 @@ const updateWindowTileBarColor = (isDark: boolean) => {
 	}
 }
 
+const syncNativeSystemBars = (isDark: boolean) => {
+	// The full player is always a dark stage over the artwork, see player/+layout.svelte
+	if (page.route.id?.startsWith('/(app)/player')) {
+		setNativeSystemBarsColor('#0b0b0b', true)
+		return
+	}
+
+	// Background color uses --surface color
+	setNativeSystemBarsColor(window.getComputedStyle(document.documentElement).backgroundColor, isDark)
+}
+
 export const setupTheme = (): void => {
 	const player = usePlayer()
 	const mainStore = useMainStore()
@@ -35,6 +48,12 @@ export const setupTheme = (): void => {
 	$effect.pre(() => {
 		document.documentElement.classList.toggle('dark', mainStore.isThemeDark)
 	})
+
+	if (isNativeApp) {
+		$effect(() => {
+			syncNativeSystemBars(mainStore.isThemeDark)
+		})
+	}
 
 	let initial = true
 	$effect.pre(() => {
@@ -62,6 +81,9 @@ export const setupTheme = (): void => {
 		void import('$lib/theme.ts').then(({ updateThemeCssVariables }) => {
 			updateThemeCssVariables(argbOrHex, isDark)
 			updateWindowTileBarColor(isDark)
+			if (isNativeApp) {
+				syncNativeSystemBars(isDark)
+			}
 		})
 	})
 }

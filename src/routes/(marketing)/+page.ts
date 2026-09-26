@@ -6,5 +6,6 @@ export const prerender = true
 export const csr = true
 
 export const load = () => {
-	redirect(301, '/library/shorts')
+	// Temporary, so browsers don't cache which page the app opens on
+	redirect(307, '/library/home')
 }

@@ -346,6 +346,10 @@ export class PlayerStore {
 		})
 
 		const ms = window.navigator.mediaSession
+		// Android WebView (the Android app) has no Media Session API
+		if (!ms) {
+			return
+		}
 
 		$effect(() => {
 			const track = this.activeTrack

@@ -1,14 +1,15 @@
 <script lang="ts">
+	import { goto } from '$app/navigation'
 	import { formatArtists, getItemLanguage } from '$lib/helpers/utils/text.ts'
+	import PlayerBookmarkButton from '$lib/rajneesh/components/player/PlayerBookmarkButton.svelte'
 	import Button from './Button.svelte'
 	import Icon from './icon/Icon.svelte'
-	import SeekBackButton from './player/buttons/SeekBackButton.svelte'
 	import PlayToggleButton from './player/buttons/PlayToggleButton.svelte'
+	import SeekBackButton from './player/buttons/SeekBackButton.svelte'
 	import MainControls from './player/MainControls.svelte'
 	import PlayerArtwork from './player/PlayerArtwork.svelte'
 	import Timeline from './player/Timeline.svelte'
 	import VolumeSlider from './player/VolumeSlider.svelte'
-	import PlayerBookmarkButton from '$lib/rajneesh/components/player/PlayerBookmarkButton.svelte'
 
 	const { class: className }: { class?: ClassValue } = $props()
 
@@ -20,17 +21,43 @@
 		const value = player.currentTime / player.duration
 		return Number.isFinite(value) ? Math.min(Math.max(value, 0), 1) : 0
 	})
+
+	// Clicks on these do their own thing; a click anywhere else on the card opens the full player
+	const CONTROLS = 'a, button, input, select, textarea, label, [role="slider"], [role="button"]'
+
+	let pressStartedOnControl = false
+
+	const isControl = (target: EventTarget | null) =>
+		target instanceof Element && target.closest(CONTROLS) !== null
+
+	const openFullPlayer = (event: MouseEvent) => {
+		// Dragging a slider and letting go over the card still fires a click on the card
+		if (pressStartedOnControl || isControl(event.target)) {
+			return
+		}
+
+		void goto('/player')
+	}
 </script>
 
+<!-- The artwork link inside is the keyboard route to the full player -->
+<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
 <div
 	id="mini-player"
 	class={[
-		'surface-frost pointer-events-auto relative isolate mx-auto max-w-225 justify-between overflow-hidden rounded-2xl border border-(--hairline) text-onSurface shadow-lift contain-content view-name-[pl-card] sm:h-auto active-view-player:border-transparent',
+		'pointer-events-auto relative isolate mx-auto max-w-225 cursor-pointer justify-between overflow-hidden rounded-2xl border border-(--hairline) surface-frost text-onSurface shadow-lift contain-content view-name-[pl-card] sm:h-auto active-view-player:border-transparent',
 		className,
 	]}
+	onpointerdown={(event) => {
+		pressStartedOnControl = isControl(event.target)
+	}}
+	onclick={openFullPlayer}
 >
 	<!-- Compact progress line for small screens, where the full timeline is hidden -->
-	<div class="absolute inset-x-4 top-0 h-0.5 overflow-hidden rounded-full bg-onSurface/10 sm:hidden" aria-hidden="true">
+	<div
+		class="absolute inset-x-4 top-0 h-0.5 overflow-hidden rounded-full bg-onSurface/10 sm:hidden"
+		aria-hidden="true"
+	>
 		<div
 			class="h-full origin-left bg-tertiary transition-transform duration-500 ease-linear"
 			style="transform: scaleX({progress})"

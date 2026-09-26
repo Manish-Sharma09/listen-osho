@@ -1,5 +1,7 @@
 // https://whatwebcando.today/articles/handling-service-worker-updates/
 
+import { isNativeApp } from './native-app.ts'
+
 const waitForPageToLoad = () => {
 	if (document.readyState === 'loading') {
 		return new Promise((resolve) => {
@@ -69,7 +71,8 @@ export const forceServiceWorkerUpdate = async (): Promise<boolean> => {
 
 /** @public */
 export const registerServiceWorker = async (options: RegisterSwOptions) => {
-	if (import.meta.env.DEV) {
+	// The Android app bundles every file, so precaching would only duplicate ~300 MB on device
+	if (import.meta.env.DEV || isNativeApp) {
 		return
 	}
 

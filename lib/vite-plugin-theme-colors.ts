@@ -43,11 +43,18 @@ export const themeColorsPlugin = (options: Options): Plugin => ({
 	async buildStart() {
 		const variables = await generateThemeVariables(options.defaultColorSeed, options.overrides)
 
+		// Lightning CSS lowers light-dark() to var(--lightningcss-light/dark) fallbacks, and a custom
+		// property resolves var() where it is declared, so tokens on :root keep the root colour scheme
+		// even inside an element that sets its own. Such elements add .theme-scope to re-resolve them.
 		const content = `
 			@theme {
 				--color-*: initial;
 				--color-transparent: transparent;
 				--color-current: currentColor;
+			  ${variables}
+			}
+
+			.theme-scope {
 			  ${variables}
 			}
 		`

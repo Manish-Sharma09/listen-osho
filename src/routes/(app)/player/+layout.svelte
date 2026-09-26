@@ -253,7 +253,7 @@
 <ListDetailsLayout
 	id="full-player"
 	mode={layoutMode}
-	class="player-immersive mx-auto w-full max-w-300 grow active-view-player:view-name-[pl-card]"
+	class="player-immersive theme-scope mx-auto w-full max-w-300 grow active-view-player:view-name-[pl-card]"
 	list={playerSnippet}
 	details={queueSnippet}
 	noListStableGutter
@@ -264,7 +264,7 @@
 	@reference '../../../app.css';
 
 	/* The player is always an immersive dark stage over the artwork, like Apple Music.
-	   Tokens use light-dark(), so switching the colour scheme here flips every token inside. */
+	   Tokens use light-dark(); .theme-scope re-declares them here so the dark scheme reaches them. */
 	:global(.player-immersive) {
 		color-scheme: dark;
 		color: var(--color-onSurface);

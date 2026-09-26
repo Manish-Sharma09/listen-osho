@@ -22,7 +22,10 @@
 		{
 			title: 'Credits',
 			links: [
-				{ label: 'Audio via Internet Archive', href: 'https://archive.org/details/osho-audio-discourses-collection' },
+				{
+					label: 'Audio via Internet Archive',
+					href: 'https://archive.org/details/osho-audio-discourses-collection',
+				},
 			],
 		},
 	]
@@ -31,7 +34,13 @@
 <footer class="mt-16 border-t border-(--hairline) pt-12 pb-8">
 	<div class="grid gap-10 sm:grid-cols-[1.4fr_repeat(3,1fr)]">
 		<div class="flex flex-col gap-3">
-			<BrandMark wordmark class="[&_img]:size-8 [&_img]:rounded-md" />
+			<a
+				href="/library/home"
+				class="flex w-fit items-center rounded-md"
+				aria-label="Listen Osho home"
+			>
+				<BrandMark wordmark class="[&_img]:size-8 [&_img]:rounded-md" />
+			</a>
 			<p class="max-w-xs text-body-md text-onSurfaceVariant">
 				Osho's discourses in Hindi and English, free to stream or save for offline listening.
 			</p>

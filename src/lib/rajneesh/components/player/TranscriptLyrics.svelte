@@ -1,15 +1,54 @@
+<script lang="ts" module>
+	const springEasing = (): string => {
+		// Damping ratio 0.78 overshoots by about 2% and settles within the duration
+		const zeta = 0.78
+		const omega = 6.8
+		const damped = omega * Math.sqrt(1 - zeta ** 2)
+		const steps = 40
+
+		const points = Array.from({ length: steps + 1 }, (_, step) => {
+			if (step === steps) {
+				return 1
+			}
+
+			const t = step / steps
+			const decay = Math.exp(-zeta * omega * t)
+			const value =
+				1 - decay * (Math.cos(damped * t) + ((zeta * omega) / damped) * Math.sin(damped * t))
+
+			return Number(value.toFixed(4))
+		})
+
+		return `linear(${points.join(', ')})`
+	}
+
+	let glideEasing: string | undefined
+
+	/** A gently damped spring where the browser supports linear(), like Apple Music's lyric scroll */
+	const getGlideEasing = () => {
+		glideEasing ??= CSS.supports('transition-timing-function', 'linear(0, 1)')
+			? springEasing()
+			: 'cubic-bezier(0.22, 1, 0.36, 1)'
+
+		return glideEasing
+	}
+</script>
+
 <script lang="ts">
 	import Sanscript from '@indic-transliteration/sanscript'
+	import { untrack } from 'svelte'
 	import IconButton from '$lib/components/IconButton.svelte'
 	import { getItemLanguage } from '$lib/helpers/utils/text.ts'
 	import EmptyState from '$lib/rajneesh/components/ui/EmptyState.svelte'
 	import { playerPanel } from '$lib/rajneesh/stores/player-panel.svelte.ts'
 	import { loadTrackTranscript } from '$lib/rajneesh/transcript/load-transcript.ts'
+	import { type LyricLine, toLyricLines } from '$lib/rajneesh/transcript/lyric-lines.ts'
 
 	/*
-	 * Apple Music style "lyrics" for discourses. Transcripts carry no timestamps, so the highlighted
-	 * paragraph follows playback proportionally to text length. It is an approximation and is
-	 * labelled as such. Tapping a paragraph seeks to the matching point in the audio.
+	 * Apple Music style "lyrics" for discourses. Transcripts carry no timestamps, so each line's
+	 * timing is estimated from how long it takes to say (see lyric-lines.ts), and the panel says so.
+	 * The current line stays sharp while the others dim and blur with distance. When it advances,
+	 * the lines glide up one after another on a spring. Tapping a line seeks to it.
 	 */
 	interface Props {
 		class?: ClassValue
@@ -22,40 +61,48 @@
 	const track = $derived(player.activeTrack)
 
 	const DEVANAGARI = /[ऀ-ॿ]/
-	/** Pause auto-scrolling for this long after the listener scrolls on their own */
-	const MANUAL_SCROLL_GRACE_MS = 4000
+	/** Where the current line rests, as a fraction of the panel height from the top */
+	const ANCHOR = 0.3
+	const GLIDE_MS = 900
+	/** Delay between neighbouring lines as they glide, which gives the rippling wave */
+	const GLIDE_STAGGER_MS = 40
+	const GLIDE_MAX_STAGGER_STEPS = 8
+	/** Lines further than this from the current one all look the same */
+	const MAX_DISTANCE = 4
+	/** Resume following playback this long after the listener stops scrolling on their own */
+	const RESUME_FOLLOW_MS = 4000
+	/** Seek slightly past a line's estimated start so that line is the one highlighted */
+	const SEEK_LEAD_S = 0.25
 
 	let status = $state<'idle' | 'loading' | 'ready' | 'missing' | 'error'>('idle')
-	let paragraphs = $state<string[]>([])
+	let lines = $state.raw<LyricLine[]>([])
 	let scroller = $state<HTMLElement | null>(null)
-	let lastManualScroll = 0
+	let list = $state<HTMLElement | null>(null)
+	/** The listener is scrolling through the transcript, so it stops following playback */
+	let browsing = $state(false)
+	let resumeTimer: ReturnType<typeof setTimeout> | undefined
+	/** Lines with a glide animation, possibly still running */
+	const gliding = new Set<HTMLElement>()
 
 	// Load whenever the playing discourse changes
 	$effect(() => {
 		const current = track
 		if (!current) {
 			status = 'idle'
-			paragraphs = []
+			lines = []
 			return
 		}
 
 		let cancelled = false
 		status = 'loading'
-		paragraphs = []
+		lines = []
 
 		loadTrackTranscript(current)
 			.then((text) => {
 				if (cancelled) return
-				if (!text) {
-					status = 'missing'
-					return
-				}
 
-				paragraphs = text
-					.split(/\n+/)
-					.map((line) => line.trim())
-					.filter((line) => line.length > 0)
-				status = paragraphs.length > 0 ? 'ready' : 'missing'
+				lines = text ? toLyricLines(text) : []
+				status = lines.length > 0 ? 'ready' : 'missing'
 			})
 			.catch(() => {
 				if (!cancelled) status = 'error'
@@ -66,77 +113,152 @@
 		}
 	})
 
-	const isHindi = $derived(paragraphs.some((line) => DEVANAGARI.test(line)))
+	const isHindi = $derived(lines.some((line) => DEVANAGARI.test(line.text)))
 	const showRoman = $derived(isHindi && playerPanel.romanized)
 	// IAST renders the danda (।, ॥) as pipes; show them as ordinary sentence punctuation
-	const toRoman = (line: string) =>
-		Sanscript.t(line, 'devanagari', 'iast')
+	const toRoman = (text: string) =>
+		Sanscript.t(text, 'devanagari', 'iast')
 			.replace(/\s*\|\|\s*/g, '. ')
 			.replace(/\s*\|\s*/g, '. ')
 			.trim()
 
-	const displayed = $derived(showRoman ? paragraphs.map(toRoman) : paragraphs)
-
-	// Where each paragraph starts, as a fraction of the whole text
-	const starts = $derived.by(() => {
-		const total = paragraphs.reduce((sum, line) => sum + line.length, 0) || 1
-		let running = 0
-		return paragraphs.map((line) => {
-			const start = running / total
-			running += line.length
-			return start
-		})
-	})
+	const displayed = $derived(lines.map((line) => (showRoman ? toRoman(line.text) : line.text)))
 
 	const progress = $derived.by(() => {
 		const value = player.currentTime / player.duration
 		return Number.isFinite(value) ? Math.min(Math.max(value, 0), 1) : 0
 	})
 
+	// The last line that has started by now
 	const activeIndex = $derived.by(() => {
-		let index = 0
-		for (let i = 0; i < starts.length; i += 1) {
-			if ((starts[i] ?? 0) <= progress) index = i
-			else break
+		let low = 0
+		let high = lines.length - 1
+		let found = 0
+
+		while (low <= high) {
+			const middle = (low + high) >> 1
+			if ((lines[middle]?.start ?? 0) <= progress) {
+				found = middle
+				low = middle + 1
+			} else {
+				high = middle - 1
+			}
 		}
-		return index
+
+		return found
 	})
 
-	const scrollToActive = (behavior: ScrollBehavior) => {
+	/** Scrolls the current line to the anchor, gliding the lines on screen into place */
+	const follow = (glide: boolean) => {
 		const container = scroller
-		const element = container?.querySelector<HTMLElement>(`[data-line="${activeIndex}"]`)
-		if (!container || !element) return
+		const items = list?.children
+		const current = items?.[activeIndex] as HTMLElement | undefined
+		if (!container || !items || !current) return
 
-		container.scrollTo({
-			top: element.offsetTop - container.clientHeight * 0.38,
-			behavior,
-		})
+		const maxTop = container.scrollHeight - container.clientHeight
+		const top = Math.min(Math.max(current.offsetTop - container.clientHeight * ANCHOR, 0), maxTop)
+		const delta = top - container.scrollTop
+		if (Math.abs(delta) < 1) return
+
+		// Where lines are mid-glide right now, so a new glide carries on without a jump
+		const inFlight = new Map<HTMLElement, number>()
+		for (const item of gliding) {
+			const { transform } = getComputedStyle(item)
+			inFlight.set(item, transform === 'none' ? 0 : new DOMMatrixReadOnly(transform).m42)
+		}
+		for (const item of gliding) {
+			for (const animation of item.getAnimations()) animation.cancel()
+		}
+		gliding.clear()
+
+		// Jump the scroll position, then start every line on screen from where it appeared to be
+		container.scrollTop = top
+		if (!glide || main.isReducedMotion) return
+
+		// A long jump (a seek) glides in from just past the edge rather than from far away
+		const reach = container.clientHeight * 0.6
+		const shift = Math.min(Math.max(delta, -reach), reach)
+		const easing = getGlideEasing()
+		const lower = top - reach
+		const upper = top + container.clientHeight + reach
+
+		const glideLine = (index: number) => {
+			const item = items[index] as HTMLElement
+			// Lines ahead in the direction of travel lead, the rest follow a beat behind
+			const steps = delta > 0 ? index - (activeIndex - 1) : activeIndex + 1 - index
+			const animation = item.animate(
+				[
+					{ transform: `translateY(${shift + (inFlight.get(item) ?? 0)}px)` },
+					{ transform: 'none' },
+				],
+				{
+					duration: GLIDE_MS,
+					delay: Math.min(Math.max(steps, 0), GLIDE_MAX_STAGGER_STEPS) * GLIDE_STAGGER_MS,
+					easing,
+					fill: 'backwards',
+				},
+			)
+			animation.onfinish = () => gliding.delete(item)
+			gliding.add(item)
+		}
+
+		// Walk out from the current line over every line on screen before or after the jump
+		for (let index = activeIndex; index >= 0; index -= 1) {
+			const item = items[index] as HTMLElement
+			if (item.offsetTop + item.offsetHeight < lower) break
+			glideLine(index)
+		}
+		for (let index = activeIndex + 1; index < items.length; index += 1) {
+			if ((items[index] as HTMLElement).offsetTop > upper) break
+			glideLine(index)
+		}
 	}
 
-	// Keep the current paragraph in view, unless the listener is reading elsewhere
+	// Snap into place when the lines change (a new discourse, or switching script) or the panel resizes
+	$effect(() => {
+		const container = scroller
+		void displayed
+		if (!container) return
+
+		untrack(() => follow(false))
+
+		const observer = new ResizeObserver(() => {
+			if (!browsing) follow(false)
+		})
+		observer.observe(container)
+
+		return () => observer.disconnect()
+	})
+
+	// Glide to the current line as playback moves on, and again when the listener stops browsing
 	$effect(() => {
 		void activeIndex
-		if (status !== 'ready') return
-		if (Date.now() - lastManualScroll < MANUAL_SCROLL_GRACE_MS) return
+		if (status !== 'ready' || browsing) return
 
-		scrollToActive(main.isReducedMotion ? 'auto' : 'smooth')
+		untrack(() => follow(true))
 	})
 
-	const markManualScroll = () => {
-		lastManualScroll = Date.now()
+	const browse = () => {
+		browsing = true
+		clearTimeout(resumeTimer)
+		resumeTimer = setTimeout(() => {
+			browsing = false
+		}, RESUME_FOLLOW_MS)
 	}
+
+	const stopBrowsing = () => {
+		clearTimeout(resumeTimer)
+		browsing = false
+	}
+
+	$effect(() => () => clearTimeout(resumeTimer))
 
 	const seekTo = (index: number) => {
-		if (!player.duration || !Number.isFinite(player.duration)) return
-		lastManualScroll = 0
-		player.seek((starts[index] ?? 0) * player.duration)
-	}
+		const line = lines[index]
+		if (!line || !player.duration || !Number.isFinite(player.duration)) return
 
-	const lineClass = (index: number) => {
-		const distance = Math.abs(index - activeIndex)
-		if (distance === 0) return 'is-active'
-		if (distance === 1) return 'is-near'
-		return 'is-far'
+		stopBrowsing()
+		player.seek(Math.min(line.start * player.duration + SEEK_LEAD_S, player.duration))
 	}
 </script>
 
@@ -145,7 +267,9 @@
 		<div class="flex flex-col">
 			<span class="text-eyebrow text-onSurface">Transcript</span>
 			{#if status === 'ready'}
-				<span class="text-body-sm text-onSurfaceVariant">Follows playback approximately</span>
+				<span class="text-body-sm text-onSurfaceVariant">
+					Timing is approximate · tap a line to jump
+				</span>
 			{/if}
 		</div>
 
@@ -168,7 +292,7 @@
 	{#if status === 'loading'}
 		<div class="flex flex-col gap-5 px-2 pt-6" role="status" aria-label="Loading transcript">
 			{#each [92, 76, 84, 60, 88] as width, index (index)}
-				<div class="skeleton h-6 rounded-md" style="width: {width}%"></div>
+				<div class="h-6 skeleton rounded-md" style="width: {width}%"></div>
 			{/each}
 		</div>
 	{:else if status === 'missing' || status === 'error' || status === 'idle'}
@@ -187,21 +311,29 @@
 	{:else}
 		<div
 			bind:this={scroller}
-			class="scroller min-h-0 flex-1 overflow-y-auto overscroll-contain px-2"
-			onwheel={markManualScroll}
-			ontouchmove={markManualScroll}
+			class="scroller relative min-h-0 flex-1 overflow-y-auto overscroll-contain px-2"
+			onwheel={browse}
+			ontouchmove={browse}
+			onfocusin={(event) => {
+				// Tabbing through the lines scrolls them, so treat it like browsing
+				if (event.target instanceof Element && event.target.matches(':focus-visible')) browse()
+			}}
 			lang={showRoman ? 'hi-Latn' : track ? getItemLanguage(track.language) : undefined}
 		>
-			<ol class="flex flex-col gap-7 pt-[18vh] pb-[45vh]">
-				{#each displayed as line, index (index)}
-					<li data-line={index}>
+			<ol
+				bind:this={list}
+				class={['flex flex-col gap-5 pt-[18vh] pb-[60vh]', browsing && 'is-browsing']}
+			>
+				{#each displayed as text, index (index)}
+					<li class={[index > 0 && lines[index]?.paragraphStart && 'mt-5']}>
 						<button
 							type="button"
-							class={['line', lineClass(index)]}
+							class="line"
+							data-distance={Math.min(Math.abs(index - activeIndex), MAX_DISTANCE)}
 							aria-current={index === activeIndex ? 'true' : undefined}
 							onclick={() => seekTo(index)}
 						>
-							{line}
+							{text}
 						</button>
 					</li>
 				{/each}
@@ -223,17 +355,22 @@
 		border-radius: 12px;
 		padding: 4px 8px;
 		margin-inline: -8px;
-		font-size: clamp(1.25rem, 2.4vw, 1.75rem);
-		line-height: 1.3;
+		font-size: clamp(1.375rem, 2.4vw, 1.875rem);
+		line-height: 1.25;
 		letter-spacing: -0.02em;
 		font-weight: 700;
 		color: var(--color-onSurface);
 		white-space: pre-wrap;
 		transform-origin: left center;
+		/* Far from the current line: faint, soft and a touch smaller */
+		opacity: 0.2;
+		filter: blur(2.4px);
+		transform: scale(0.96);
 		transition:
-			opacity 600ms var(--ease-calm),
-			filter 600ms var(--ease-calm),
-			transform 600ms var(--ease-calm);
+			opacity 700ms var(--ease-calm),
+			filter 700ms var(--ease-calm),
+			transform 700ms var(--ease-calm),
+			background-color 200ms ease;
 		user-select: text;
 		-webkit-user-select: text;
 	}
@@ -243,33 +380,45 @@
 		outline-offset: 2px;
 	}
 
-	.line.is-active {
+	.line[data-distance='0'] {
 		opacity: 1;
-		transform: scale(1.02);
+		filter: none;
+		transform: none;
 	}
 
-	.line.is-near {
-		opacity: 0.4;
+	.line[data-distance='1'] {
+		opacity: 0.45;
+		filter: blur(0.6px);
 	}
 
-	.line.is-far {
-		opacity: 0.22;
+	.line[data-distance='2'] {
+		opacity: 0.32;
 		filter: blur(1.2px);
 	}
 
+	.line[data-distance='3'] {
+		opacity: 0.25;
+		filter: blur(1.8px);
+	}
+
+	/* While the listener scrolls on their own, every line is readable */
+	.is-browsing .line:not([data-distance='0']) {
+		opacity: 0.55;
+		filter: none;
+		transform: none;
+	}
+
 	@media (any-hover: hover) {
-		.line:not(.is-active):hover {
-			opacity: 0.7;
+		.line:not([data-distance='0']):hover {
+			opacity: 0.85;
 			filter: none;
+			background-color: rgb(255 255 255 / 0.06);
 		}
 	}
 
 	@media (prefers-reduced-motion: reduce) {
 		.line {
 			transition: none;
-		}
-
-		.line.is-active {
 			transform: none;
 		}
 	}

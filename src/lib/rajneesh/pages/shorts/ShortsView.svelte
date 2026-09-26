@@ -538,10 +538,11 @@ async function saveBookmarkForActiveShort() {
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
+<!-- `isolate` keeps the slides' z-index inside this scroller, so they can't cover the fixed top bar -->
 <div
 	bind:this={viewportEl}
 	onclick={handleUserTap}
-	class="shorts-viewport -mx-4 flex h-[100dvh] min-h-[100dvh] flex-col overflow-y-auto overscroll-y-none sm:-mx-6"
+	class="shorts-viewport isolate -mx-4 flex h-[100dvh] min-h-[100dvh] flex-col overflow-y-auto overscroll-y-none sm:-mx-6"
 	style="scroll-snap-type: y mandatory;"
 >
 	{#if shorts.length === 0}

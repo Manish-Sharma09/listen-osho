@@ -192,7 +192,11 @@ html {
 	--app-header-height: --spacing(16);
 	/* DESIGN.md: centered ~1200px container */
 	--app-max-content-width: --spacing(300);
+}
 
+/* .theme-scope re-resolves these under a nested color-scheme, see vite-plugin-theme-colors.ts */
+html,
+.theme-scope {
 	/* Hairline (DESIGN.md #ebebeb) and translucent chrome. light-dark() follows html color-scheme */
 	--hairline: light-dark(#ebebeb, #262626);
 	--hairline-strong: light-dark(#dcdcdc, #333333);
